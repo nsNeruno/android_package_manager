@@ -4,3 +4,7 @@ List<T>? asTypedList<T>(dynamic data,) {
   }
   return null;
 }
+
+bool containsBit(int data, int bit,) {
+  return data ^ bit == bit;
+}

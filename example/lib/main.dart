@@ -64,7 +64,7 @@ class _MainPageState extends State<MainPage> {
             child: Card(
               child: ListTile(
                 title: Text(info.name ?? "No Name",),
-                subtitle: Text(info.packageName,),
+                subtitle: Text(info.packageName ?? "-",),
               ),
             ),
           );

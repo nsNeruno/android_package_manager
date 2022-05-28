@@ -1,7 +1,8 @@
-abstract class ApplicationInfo {
+import 'package_item_info.dart';
+
+abstract class ApplicationInfo extends PackageItemInfo {
 
   ApplicationInfo({
-    required this.packageName,
     this.className,
     required this.compatibleWidthLimitDp,
     required this.dataDir,
@@ -20,7 +21,6 @@ abstract class ApplicationInfo {
     required this.uiOptions,
     required this.uid,
     required this.targetSdkVersion,
-    this.name,
     this.manageSpaceActivityName,
     this.nativeLibraryDir,
     this.permission,
@@ -43,10 +43,11 @@ abstract class ApplicationInfo {
     this.nativeHeapZeroInitialized,
     this.requestRawExternalStorageAccess,
     this.areAttributionsUserVisible,
-  });
+    Map? packageItemInfo,
+  }): super(
+    Map<String, dynamic>.from(packageItemInfo ?? {},),
+  );
 
-  final String packageName;
-  final String? name;
   final String? backupAgentName;
   final String? className;
   final int compatibleWidthLimitDp;

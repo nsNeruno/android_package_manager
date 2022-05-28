@@ -4,8 +4,6 @@ import '../base/application_info.dart';
 class ApplicationInfoImpl extends ApplicationInfo {
 
   ApplicationInfoImpl(Map<String, dynamic> data,): super(
-    packageName: data["packageName"],
-    name: data["name"],
     className: data["className"],
     compatibleWidthLimitDp: data["compatibleWidthLimitDp"],
     dataDir: data["dataDir"],
@@ -46,5 +44,6 @@ class ApplicationInfoImpl extends ApplicationInfo {
     nativeHeapZeroInitialized: data["nativeHeapZeroInitialized"],
     requestRawExternalStorageAccess: data["requestRawExternalStorageAccess"],
     areAttributionsUserVisible: data["areAttributionsUserVisible"],
+    packageItemInfo: data,
   );
 }

@@ -1,6 +1,6 @@
 name: android_package_manager
-description: Provides access to Android's native PackageManager API
-version: 0.0.1
+description: Provides access to Android's native PackageManager API to fetch various information, such as installed applications, packages, permissions, etc.
+version: 0.1.0
 homepage: https://github.com/nsNeruno/android_package_manager
 
 environment:
