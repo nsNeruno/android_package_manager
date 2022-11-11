@@ -1,4 +1,14 @@
+import 'package:android_package_manager/src/utils/parser_utils.dart';
+
+import '../base/activity_info.dart';
+import '../base/application_info.dart';
+import '../base/configuration_info.dart';
+import '../base/feature_info.dart';
+import '../base/instrumentation_info.dart';
 import '../base/package_info.dart';
+import '../base/permission_info.dart';
+import '../base/provider_info.dart';
+import '../base/service_info.dart';
 import '../enums.dart';
 import 'activity_info.dart';
 import 'application_info.dart';
@@ -12,61 +22,43 @@ import 'service_info.dart';
 class PackageInfoImpl extends PackageInfo {
   
   PackageInfoImpl(Map<String, dynamic> data,) : super(
-    activities: data['activities'] is List
-        ? (data['activities'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => ActivityInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
-    applicationInfo: data['applicationInfo'] is Map<String, dynamic>
-        ? ApplicationInfoImpl(data['applicationInfo'],)
-        : null,
-    configPreferences: data['configPreferences'] is List
-        ? (data['configPreferences'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => ConfigurationInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
-    featureGroups: data['featureGroups'] is List
-        ? (data['featureGroups'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => FeatureGroupInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
+    activities: safeListParse<ActivityInfo>(
+      data['activities'], (data) => ActivityInfoImpl(data,),
+    ),
+    applicationInfo: safeMapParse<ApplicationInfo>(
+      data['applicationInfo'], (data) => ApplicationInfoImpl(data,),
+    ),
+    configPreferences: safeListParse<ConfigurationInfo>(
+      data['configPreferences'], (data) => ConfigurationInfoImpl(data,),
+    ),
+    featureGroups: safeListParse<FeatureGroupInfo>(
+      data['featureGroups'], (data) => FeatureGroupInfoImpl(data,),
+    ),
     firstInstallTime: data['firstInstallTime'],
     gids: data['gids'],
     installLocation: _parseInstallLocation(data['installLocation'],),
-    instrumentation: data['instrumentation'] is List
-        ? (data['instrumentation'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => InstrumentationInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
+    instrumentation: safeListParse<InstrumentationInfo>(
+      data['instrumentation'], (data) => InstrumentationInfoImpl(data,),
+    ),
     lastUpdateTime: data['lastUpdateTime'],
     packageName: data['packageName'],
-    permissions: data['permissions'] is List
-        ? (data['permissions'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => PermissionInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
-    providers: data['providers'] is List
-        ? (data['providers'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => ProviderInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
-    receivers: data['receivers'] is List
-        ? (data['receivers'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => ActivityInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
-    reqFeatures: data['reqFeatures'] is List
-        ? (data['reqFeatures'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => FeatureInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
+    permissions: safeListParse<PermissionInfo>(
+      data['permissions'], (data) => PermissionInfoImpl(data,),
+    ),
+    providers: safeListParse<ProviderInfo>(
+      data['providers'], (data) => ProviderInfoImpl(data,),
+    ),
+    receivers: safeListParse<ActivityInfo>(
+      data['receivers'], (data) => ActivityInfoImpl(data,),
+    ),
+    reqFeatures: safeListParse<FeatureInfo>(
+      data['reqFeatures'], (data) => FeatureInfoImpl(data,),
+    ),
     requestedPermissions: data['requestedPermissions'],
     requestedPermissionFlags: data['requestedPermissionFlags'],
-    services: data['services'] is List
-        ? (data['services'] as List).whereType<Map<String, dynamic>>().map(
-          (e) => ServiceInfoImpl(e,),
-    ).toList(growable: false,)
-        : null,
+    services: safeListParse<ServiceInfo>(
+      data['services'], (data) => ServiceInfoImpl(data,),
+    ),
     sharedUserId: data['sharedUserId'],
     sharedUserLabel: data['sharedUserLabel'],
     splitNames: data['splitNames']?.whereType<String>().toList(growable: false,),

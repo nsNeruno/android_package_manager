@@ -1,10 +1,10 @@
 name: android_package_manager
 description: Provides access to Android's native PackageManager API to fetch various information, such as installed applications, packages, permissions, etc.
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/nsNeruno/android_package_manager
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
   flutter: ">=2.5.0"
 
 dependencies:

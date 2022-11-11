@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:android_package_manager/android_package_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -54,7 +56,7 @@ void main() {
           print("BEGIN: getInstalledPackages",);
           print(
             packages?.map(
-              (e) => e.packageName,
+              (e) => "${e.packageName} | (${e.applicationInfo != null}) AppInfo.name: ${e.applicationInfo?.name}",
             ).join("\n",),
           );
           print("END: getInstalledPackages",);
