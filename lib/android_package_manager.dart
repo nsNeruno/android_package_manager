@@ -2,7 +2,6 @@ library android_package_manager;
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
@@ -27,6 +26,10 @@ abstract class AndroidPackageManager {
     }
     return _pm;
   }
+
+  Future<bool> canPackageQuery({
+    required String sourcePackageName, required String targetPackageName,
+  }) => throw UnimplementedError();
 
   Future<List<String>?> canonicalToCurrentPackageNames({
     required List<String> packageNames,

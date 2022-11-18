@@ -21,6 +21,21 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   };
 
   @override
+  Future<bool> canPackageQuery({
+    required String sourcePackageName,
+    required String targetPackageName,
+  }) async {
+    final queryable = await _channel.invokeMethod<bool>(
+      "canPackageQuery",
+      {
+        "sourcePackageName": sourcePackageName,
+        "targetPackageName": targetPackageName,
+      },
+    );
+    return queryable ?? false;
+  }
+
+  @override
   Future<List<String>?> canonicalToCurrentPackageNames({
     required List<String> packageNames,
   }) => _channel.invokeListMethod<String>(

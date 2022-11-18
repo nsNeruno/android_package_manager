@@ -52,3 +52,8 @@ fun isAtLeastAndroid31(): Boolean {
 fun isAtLeastAndroid32(): Boolean {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2
 }
+
+@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.TIRAMISU)
+fun isAtLeastAndroid33(): Boolean {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+}

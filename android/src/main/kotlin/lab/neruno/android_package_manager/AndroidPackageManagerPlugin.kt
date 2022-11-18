@@ -10,7 +10,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.NonNull
-import androidx.annotation.RequiresApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -50,17 +49,13 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        android.provider.Settings.ACTION_SETTINGS
         when (call.method) {
             "addPermission" -> {
                 // TODO: Find way to obtain PermissionInfo instances somewhere
                 result.success(null)
             }
             "addWhitelistedRestrictedPermission" -> addWhitelistedRestrictedPermission(call, result)
-            "canPackageQuery" -> {
-                // TODO: Raise targetSdk to 32 (Tiramisu)
-                result.success(null)
-            }
+            "canPackageQuery" -> canPackageQuery(call, result)
             "canRequestPackageInstalls" -> canRequestPackageInstalls(result)
             "canonicalToCurrentPackageNames" -> canonicalToCurrentPackageNames(call, result)
             "checkPermission" -> checkPermission(call, result)
@@ -229,132 +224,6 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
 
     override fun onDetachedFromActivity() {}
 
-    private fun isValidApplicationInfoFlags(flags: Int): Boolean {
-        val availableFlags = mutableListOf(
-            PackageManager.GET_META_DATA,
-            PackageManager.GET_SHARED_LIBRARY_FILES
-        )
-        if (isAtLeastAndroid24()) {
-            availableFlags += listOf(
-                PackageManager.MATCH_DISABLED_UNTIL_USED_COMPONENTS,
-                PackageManager.MATCH_SYSTEM_ONLY,
-                PackageManager.MATCH_UNINSTALLED_PACKAGES
-            )
-
-            if (isAtLeastAndroid29()) {
-                availableFlags.add(
-                    PackageManager.MATCH_APEX
-                )
-            }
-        }
-
-        return availableFlags.contains(flags)
-    }
-
-    private fun isValidPackageInfoFlags(flags: Int): Boolean {
-        val availableFlags = mutableListOf(
-            PackageManager.GET_ACTIVITIES,
-            PackageManager.GET_CONFIGURATIONS,
-            PackageManager.GET_GIDS,
-            PackageManager.GET_INSTRUMENTATION,
-            PackageManager.GET_META_DATA,
-            PackageManager.GET_PERMISSIONS,
-            PackageManager.GET_PROVIDERS,
-            PackageManager.GET_RECEIVERS,
-            PackageManager.GET_SERVICES,
-            PackageManager.GET_SHARED_LIBRARY_FILES,
-            PackageManager.GET_URI_PERMISSION_PATTERNS
-        )
-
-        if (isAtLeastAndroid28()) {
-            availableFlags += listOf(
-                PackageManager.GET_SIGNING_CERTIFICATES,
-                PackageManager.MATCH_UNINSTALLED_PACKAGES,
-                PackageManager.MATCH_DISABLED_COMPONENTS,
-                PackageManager.MATCH_DISABLED_UNTIL_USED_COMPONENTS,
-                PackageManager.MATCH_SYSTEM_ONLY
-            )
-
-            if (isAtLeastAndroid29()) {
-                availableFlags.add(PackageManager.MATCH_APEX)
-
-                if (isAtLeastAndroid31()) {
-                    availableFlags.add(PackageManager.GET_ATTRIBUTIONS)
-                }
-            }
-        }
-        return availableFlags.contains(flags)
-    }
-
-    private fun isValidComponentInfoFlags(flags: Int): Boolean {
-        val availableFlags = mutableListOf(
-            PackageManager.GET_META_DATA,
-            PackageManager.GET_SHARED_LIBRARY_FILES,
-            PackageManager.MATCH_DEFAULT_ONLY,
-        )
-
-        if (isAtLeastAndroid23()) {
-            availableFlags.add(PackageManager.MATCH_ALL)
-
-            if (isAtLeastAndroid24()) {
-                availableFlags += listOf(
-                    PackageManager.MATCH_DISABLED_COMPONENTS,
-                    PackageManager.MATCH_DISABLED_UNTIL_USED_COMPONENTS,
-                    PackageManager.MATCH_DIRECT_BOOT_AWARE,
-                    PackageManager.MATCH_DIRECT_BOOT_UNAWARE,
-                    PackageManager.MATCH_SYSTEM_ONLY,
-                    PackageManager.MATCH_UNINSTALLED_PACKAGES
-                )
-
-                if (isAtLeastAndroid29()) {
-                    availableFlags.add(PackageManager.MATCH_DIRECT_BOOT_AUTO)
-                }
-            }
-        }
-        return availableFlags.contains(flags)
-    }
-
-    private fun isValidEnabledFlags(flags: Int): Boolean = if (isAtLeastAndroid30()) {
-        listOf(
-            PackageManager.DONT_KILL_APP,
-            PackageManager.SYNCHRONOUS
-        ).contains(flags)
-    } else {
-        flags == PackageManager.DONT_KILL_APP
-    }
-
-//    private fun isValidInstallFlags(flags: Int): Boolean {
-//        listOf(
-//            PackageManager.INSTALL_REPLACE_EXISTING,
-//            PackageManager.INSTALL_ALLOW_TEST,
-//            PackageManager.INSTALL_INTERNAL,
-//            PackageManager.INSTALL_FROM_ADB,
-//            PackageManager.INSTALL_ALL_USERS,
-//            PackageManager.INSTALL_REQUEST_DOWNGRADE,
-//            PackageManager.INSTALL_GRANT_RUNTIME_PERMISSIONS,
-//            PackageManager.INSTALL_ALL_WHITELIST_RESTRICTED_PERMISSIONS,
-//            PackageManager.INSTALL_FORCE_VOLUME_UUID,
-//            PackageManager.INSTALL_FORCE_PERMISSION_PROMPT,
-//            PackageManager.INSTALL_INSTANT_APP,
-//            PackageManager.INSTALL_DONT_KILL_APP,
-//            PackageManager.INSTALL_FULL_APP,
-//            PackageManager.INSTALL_ALLOCATE_AGGRESSIVE,
-//            PackageManager.INSTALL_VIRTUAL_PRELOAD,
-//            PackageManager.INSTALL_APEX,
-//            PackageManager.INSTALL_ENABLE_ROLLBACK,
-//            PackageManager.INSTALL_ALLOW_DOWNGRADE,
-//            PackageManager.INSTALL_STAGED
-//        )
-//    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun isValidWhitelistFlags(flags: Int): Boolean = listOf(
-        0,
-        PackageManager.FLAG_PERMISSION_WHITELIST_SYSTEM,
-        PackageManager.FLAG_PERMISSION_WHITELIST_UPGRADE,
-        PackageManager.FLAG_PERMISSION_WHITELIST_INSTALLER
-    ).contains(flags)
-
     private fun provideComponentName(call: MethodCall, result: Result? = null): ComponentName? {
         val pkg = call.argument<String>("pkg")
         val cls = call.argument<String>("cls")
@@ -367,6 +236,93 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun provideFlags(call: MethodCall): Int = call.argument<Int>(flags) ?: 0
+
+    private fun provideFlagsAsLong(call: MethodCall): Long = call.argument<Long>(flags) ?: 0
+
+    @Suppress("UNNECESSARY_SAFE_CALL")
+    private fun <F, T> runWithFlags(
+        call: MethodCall,
+        result: Result? = null,
+        flagFactory: (flags: Long) -> F,
+        resultBuilder: (flags: Int) -> T?,
+        api33ResultBuilder: (flags: F) -> T?
+    ) {
+        if (Build.VERSION.SDK_INT >= 33) {
+            result?.success(
+                api33ResultBuilder(
+                    flagFactory(
+                        provideFlagsAsLong(call)
+                    )
+                )
+            )
+        } else {
+            result?.success(
+                resultBuilder(
+                    provideFlags(call)
+                )
+            )
+        }
+    }
+
+    private fun <F, T> runWithComponentNameAndFlags(
+        call: MethodCall,
+        result: Result? = null,
+        flagFactory: (flags: Long) -> F,
+        resultBuilder: (componentName: ComponentName, flags: Int) -> T,
+        api33ResultBuilder: (componentName: ComponentName, flags: F) -> T
+    ) {
+        provideComponentName(call, result)?.run {
+            try {
+                if (Build.VERSION.SDK_INT >= 33) {
+                    result?.success(
+                        api33ResultBuilder(
+                            this,
+                            flagFactory(
+                                provideFlagsAsLong(call)
+                            )
+                        )
+                    )
+                } else {
+                    result?.success(
+                        resultBuilder(
+                            this,
+                            provideFlags(call)
+                        )
+                    )
+                }
+            } catch (ex: PackageManager.NameNotFoundException) {
+                result?.error(ex.javaClass.name, ex.message, null)
+            }
+        }
+    }
+
+    private fun <F, T> runWithPackageNameAndFlags(
+        call: MethodCall,
+        result: Result,
+        flagFactory: (flags: Long) -> F,
+        resultBuilder: (packageName: String, flags: Int) -> T,
+        api33ResultBuilder: (packageName: String, flags: F) -> T
+    ) {
+        providePackageName(call, result)?.run {
+            if (Build.VERSION.SDK_INT >= 33) {
+                result.success(
+                    api33ResultBuilder(
+                        this,
+                        flagFactory(
+                            provideFlagsAsLong(call)
+                        )
+                    )
+                )
+            } else {
+                result.success(
+                    resultBuilder(
+                        this,
+                        provideFlags(call)
+                    )
+                )
+            }
+        }
+    }
 
 //    private fun provideFlags(call: MethodCall, validator: (Int) -> Boolean, fallbackFlags: Int? = null): Int {
 //        val flags = call.argument<Int>(flags)
@@ -404,7 +360,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         return null
     }
 
-    private fun providePackageName(call: MethodCall, result: Result, ignoreResult: Boolean = false): String? {
+    private fun providePackageName(call: MethodCall, result: Result): String? {
         val packageName = call.argument<String>(packageName)
         if (packageName == null) {
             result.success(null)
@@ -477,6 +433,28 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         result.success(packageManager.canRequestPackageInstalls())
     }
 
+    private fun canPackageQuery(call: MethodCall, result: Result) {
+        if (!isAtLeastAndroid33()) {
+            result.success(false)
+            return
+        }
+        try {
+            val sourcePackageName = call.argument<String>("sourcePackageName")
+            val targetPackageName = call.argument<String>("targetPackageName")
+            if (sourcePackageName != null && targetPackageName != null) {
+                result.success(
+                    packageManager.canPackageQuery(
+                        sourcePackageName, targetPackageName
+                    )
+                )
+            } else {
+                result.success(false)
+            }
+        } catch (ex: PackageManager.NameNotFoundException) {
+            result.error(ex.javaClass.name, ex.message, null)
+        }
+    }
+
     private fun canonicalToCurrentPackageNames(call: MethodCall, result: Result) {
         val packageNames = call.argument<List<String>>("packageNames")?.toTypedArray()
         if (packageNames == null) {
@@ -547,18 +525,17 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun getActivityInfo(call: MethodCall, result: Result) {
-        provideComponentName(call, result)?.let {
-            provideFlags(call).run {
-//            provideFlags(call, ::isValidComponentInfoFlags).run {
-                try {
-                    result.success(
-                        packageManager.getActivityInfo(it, this).toMap()
-                    )
-                } catch (ex: PackageManager.NameNotFoundException) {
-                    result.error(ex.javaClass.name, ex.message, null)
-                }
+        runWithComponentNameAndFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.ComponentInfoFlags.of(flags) },
+            resultBuilder = { componentName, flags ->
+                packageManager.getActivityInfo(componentName, flags).toMap()
+            },
+            api33ResultBuilder = { componentName, flags ->
+                packageManager.getActivityInfo(componentName, flags).toMap()
             }
-        }
+        )
     }
 
     private fun getActivityLogo(call: MethodCall, result: Result) {
@@ -666,16 +643,17 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun getInstalledApplications(call: MethodCall, result: Result) {
-        provideFlags(call).run {
-//        provideFlags(call, ::isValidApplicationInfoFlags).run {
-            packageManager.getInstalledApplications(this).run {
-                result.success(
-                    this.map {
-                        it.toMap()
-                    }
-                )
-            }
-        }
+        runWithFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.ApplicationInfoFlags.of(flags) },
+            resultBuilder = { flags ->
+                packageManager.getInstalledApplications(flags).map { it.toMap() }
+            },
+            api33ResultBuilder = { flags ->
+                packageManager.getInstalledApplications(flags).map { it.toMap() }
+            },
+        )
     }
 
     private fun getInstalledModules(result: Result) {
@@ -691,14 +669,17 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun getInstalledPackages(call: MethodCall, result: Result) {
-        provideFlags(call).run {
-//        provideFlags(call, ::isValidPackageInfoFlags).run {
-            result.success(
-                packageManager.getInstalledPackages(this).map {
-                    it.toMap()
-                }
-            )
-        }
+        runWithFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.PackageInfoFlags.of(flags) },
+            resultBuilder = { flags -> packageManager.getInstalledPackages(flags).map {
+                it.toMap()
+            }},
+            api33ResultBuilder = { flags -> packageManager.getInstalledPackages(flags).map {
+                it.toMap()
+            }}
+        )
     }
 
     private fun getInstantAppCookie(result: Result) {
@@ -785,12 +766,17 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             result.success(null)
             return
         }
-        provideFlags(call).run {
-//        provideFlags(call, ::isValidPackageInfoFlags).run {
-            result.success(
-                packageManager.getPackageArchiveInfo(archiveFilePath, this)?.toMap()
-            )
-        }
+        runWithFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.PackageInfoFlags.of(flags) },
+            resultBuilder = { flags ->
+                packageManager.getPackageArchiveInfo(archiveFilePath, flags)?.toMap()
+            },
+            api33ResultBuilder = { flags ->
+                packageManager.getPackageArchiveInfo(archiveFilePath, flags)?.toMap()
+            }
+        )
     }
 
     private fun getPackageGids(call: MethodCall, result: Result) {
@@ -802,18 +788,17 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun getPackageInfo(call: MethodCall, result: Result) {
-        providePackageName(call, result)?.let {
-            provideFlags(call).run {
-//            provideFlags(call, ::isValidPackageInfoFlags).run {
-                try {
-                    result.success(
-                        packageManager.getPackageInfo(it, this).toMap()
-                    )
-                } catch (ex: PackageManager.NameNotFoundException) {
-                    result.error(ex.javaClass.name, ex.message, null)
-                }
+        runWithPackageNameAndFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.PackageInfoFlags.of(flags) },
+            resultBuilder = { packageName, flags ->
+                packageManager.getPackageInfo(packageName, flags).toMap()
+            },
+            api33ResultBuilder = { packageName, flags ->
+                packageManager.getPackageInfo(packageName, flags).toMap()
             }
-        }
+        )
     }
 
     private fun getPackageUid(call: MethodCall, result: Result) {
@@ -821,18 +806,17 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             result.success(null)
             return
         }
-        providePackageName(call, result)?.let {
-            provideFlags(call).run {
-//            provideFlags(call, ::isValidPackageInfoFlags).run {
-                try {
-                    result.success(
-                        packageManager.getPackageUid(it, this)
-                    )
-                } catch (ex: PackageManager.NameNotFoundException) {
-                    result.error(ex.javaClass.name, ex.message, null)
-                }
+        runWithPackageNameAndFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.PackageInfoFlags.of(flags) },
+            resultBuilder = { packageName, flags ->
+                packageManager.getPackageInfo(packageName, flags).toMap()
+            },
+            api33ResultBuilder = { packageName, flags ->
+                packageManager.getPackageInfo(packageName, flags).toMap()
             }
-        }
+        )
     }
 
     private fun getPackagesForUid(call: MethodCall, result: Result) {
@@ -852,14 +836,21 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             result.success(null)
             return
         }
-        provideFlags(call).run {
-//        provideFlags(call, ::isValidPackageInfoFlags).run {
-            result.success(
-                packageManager.getPackagesHoldingPermissions(permissions, this).map {
+        runWithFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.PackageInfoFlags.of(flags) },
+            resultBuilder = { flags ->
+                packageManager.getPackagesHoldingPermissions(permissions, flags).map {
                     it.toMap()
                 }
-            )
-        }
+            },
+            api33ResultBuilder = { flags ->
+                packageManager.getPackagesHoldingPermissions(permissions, flags).map {
+                    it.toMap()
+                }
+            }
+        )
     }
 
     private fun getPermissionGroupInfo(call: MethodCall, result: Result) {
@@ -914,48 +905,45 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun getProviderInfo(call: MethodCall, result: Result) {
-        provideComponentName(call, result)?.let {
-            provideFlags(call).run {
-//            provideFlags(call, ::isValidComponentInfoFlags).run {
-                try {
-                    packageManager.getProviderInfo(it, this).run {
-                        result.success(this.toMap())
-                    }
-                } catch (ex: PackageManager.NameNotFoundException) {
-                    result.error(ex.javaClass.name, ex.message, null)
-                }
+        runWithComponentNameAndFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.ComponentInfoFlags.of(flags) },
+            resultBuilder = { componentName, flags ->
+                packageManager.getProviderInfo(componentName, flags).toMap()
+            },
+            api33ResultBuilder = { componentName, flags ->
+                packageManager.getProviderInfo(componentName, flags).toMap()
             }
-        }
+        )
     }
 
     private fun getReceiverInfo(call: MethodCall, result: Result) {
-        provideComponentName(call, result)?.let {
-            provideFlags(call).run {
-//            provideFlags(call, ::isValidComponentInfoFlags).run {
-                try {
-                    result.success(
-                        packageManager.getReceiverInfo(it, this).toMap()
-                    )
-                } catch (ex: PackageManager.NameNotFoundException) {
-                    result.error(ex.javaClass.name, ex.message, null)
-                }
-            }
-        }
+        runWithComponentNameAndFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.ComponentInfoFlags.of(flags) },
+            resultBuilder = { componentName, flags ->
+                packageManager.getReceiverInfo(componentName, flags).toMap()
+            },
+            api33ResultBuilder = { componentName, flags ->
+                packageManager.getReceiverInfo(componentName, flags).toMap()
+            },
+        )
     }
 
     private fun getServiceInfo(call: MethodCall, result: Result) {
-        provideComponentName(call, result)?.let {
-            provideFlags(call).run {
-//            provideFlags(call, ::isValidComponentInfoFlags).run {
-                try {
-                    result.success(
-                        packageManager.getServiceInfo(it, this).toMap()
-                    )
-                } catch (ex: PackageManager.NameNotFoundException) {
-                    result.error(ex.javaClass.name, ex.message, null)
-                }
-            }
-        }
+        runWithComponentNameAndFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.ComponentInfoFlags.of(flags) },
+            resultBuilder = { componentName, flags ->
+                packageManager.getServiceInfo(componentName, flags).toMap()
+            },
+            api33ResultBuilder = { componentName, flags ->
+                packageManager.getServiceInfo(componentName, flags).toMap()
+            },
+        )
     }
 
     private fun getSuspendedPackageAppExtras(result: Result) {
@@ -981,6 +969,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun getSystemAvailableFeatures(result: Result) {
+        @Suppress("UNNECESSARY_SAFE_CALL")
         result.success(
             @Suppress("SAFE_CALL_WILL_CHANGE_NULLABILITY")
             packageManager.systemAvailableFeatures?.map {
@@ -1016,7 +1005,6 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         }
         providePackageName(call, result)?.let {
             provideFlags(call).run {
-//            provideFlags(call, ::isValidWhitelistFlags, 0).run {
                 result.success(
                     packageManager.getWhitelistedRestrictedPermissions(
                         it, this
@@ -1074,7 +1062,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         }
         result.success(
             run {
-                providePackageName(call, result, true)?.let {
+                providePackageName(call, result)?.let {
                     packageManager.isAutoRevokeWhitelisted(it)
                 } ?: packageManager.isAutoRevokeWhitelisted
             }
@@ -1110,7 +1098,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         }
         result.success(
             run {
-                providePackageName(call, result, true)?.let {
+                providePackageName(call, result)?.let {
                     packageManager.isInstantApp(it)
                 } ?: packageManager.isInstantApp
             }
@@ -1124,7 +1112,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         }
         result.success(
             run {
-                providePackageName(call, result, true)?.let {
+                providePackageName(call, result)?.let {
                     packageManager.isPackageSuspended(it)
                 } ?: packageManager.isPackageSuspended
             }
@@ -1197,6 +1185,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         }
     }
 
+    @Suppress("SAFE_CALL_WILL_CHANGE_NULLABILITY", "UNNECESSARY_SAFE_CALL")
     private fun queryContentProviders(call: MethodCall, result: Result) {
         val processName = call.argument<String>("processName")
         val uid = call.argument<Int>("uid")
@@ -1204,15 +1193,21 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             result.success(null)
             return
         }
-        provideFlags(call).run {
-//        provideFlags(call, ::isValidComponentInfoFlags).run {
-            @Suppress("SAFE_CALL_WILL_CHANGE_NULLABILITY")
-            result.success(
-                packageManager.queryContentProviders(processName, uid, this)?.map {
+        runWithFlags(
+            call,
+            result,
+            flagFactory = { flags -> PackageManager.ComponentInfoFlags.of(flags) },
+            resultBuilder = { flags ->
+                packageManager.queryContentProviders(processName, uid, flags)?.map {
                     it.toMap()
                 }
-            )
-        }
+            },
+            api33ResultBuilder = { flags ->
+                packageManager.queryContentProviders(processName, uid, flags)?.map {
+                    it.toMap()
+                }
+            }
+        )
     }
 
     private fun queryInstrumentation(call: MethodCall, result: Result) {
@@ -1372,12 +1367,19 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             result.success(null)
             return
         }
-        provideFlags(call).run {
-//        provideFlags(call, ::isValidComponentInfoFlags).run {
-            result.success(
-                packageManager.resolveContentProvider(authority, this)?.toMap()
-            )
-        }
+        runWithFlags(
+            call,
+            result,
+            flagFactory = { flags ->
+                PackageManager.ComponentInfoFlags.of(flags)
+            },
+            resultBuilder = { flags ->
+                packageManager.resolveContentProvider(authority, flags)?.toMap()
+            },
+            api33ResultBuilder = { flags ->
+                packageManager.resolveContentProvider(authority, flags)?.toMap()
+            }
+        )
     }
 
     private fun setApplicationCategoryHint(call: MethodCall, result: Result) {
@@ -1419,7 +1421,6 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         providePackageName(call, result)?.let { packageName ->
             provideNewState(call, result)?.let { newState ->
                 provideFlags(call).run {
-//                provideFlags(call, ::isValidEnabledFlags, PackageManager.DONT_KILL_APP).run {
                     packageManager.setApplicationEnabledSetting(packageName, newState, this)
                     result.success(null)
                 }
@@ -1448,7 +1449,6 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         provideComponentName(call, result)?.let { componentName ->
             provideNewState(call, result)?.let { newState ->
                 provideFlags(call).run {
-//                provideFlags(call, ::isValidEnabledFlags, 0).run {
                     packageManager.setComponentEnabledSetting(componentName, newState, this)
                     result.success(null)
                 }
