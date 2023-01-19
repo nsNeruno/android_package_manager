@@ -1,7 +1,6 @@
 import 'package_item_info.dart';
 
 abstract class ApplicationInfo extends PackageItemInfo {
-
   ApplicationInfo({
     this.className,
     required this.compatibleWidthLimitDp,
@@ -44,14 +43,16 @@ abstract class ApplicationInfo extends PackageItemInfo {
     this.requestRawExternalStorageAccess,
     this.areAttributionsUserVisible,
     Map? packageItemInfo,
-  }): super(
-    Map<String, dynamic>.from(packageItemInfo ?? {},),
-  );
+  }) : super(
+          Map<String, dynamic>.from(
+            packageItemInfo ?? {},
+          ),
+        );
 
   final String? backupAgentName;
   final String? className;
   final int compatibleWidthLimitDp;
-  final String dataDir;
+  final String? dataDir;
   final int descriptionRes;
   final bool enabled;
   final int flags;
@@ -59,11 +60,11 @@ abstract class ApplicationInfo extends PackageItemInfo {
   final String? manageSpaceActivityName;
   final String? nativeLibraryDir;
   final String? permission;
-  final String processName;
-  final String publicSourceDir;
+  final String? processName;
+  final String? publicSourceDir;
   final int requiresSmallestWidthDp;
   final List<String>? sharedLibraryFiles;
-  final String sourceDir;
+  final String? sourceDir;
   final List<String>? splitPublicSourceDirs;
   final List<String>? splitSourceDirs;
   final int targetSdkVersion;
