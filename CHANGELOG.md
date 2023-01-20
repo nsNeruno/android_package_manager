@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Fixed _ApplicationInfo_ parsing failure due to possibly null directories and process name on *Android 13* (credits to [codercengiz](https://github.com/codercengiz))
+
 ## 0.3.0
 
 * Raised Target SDK Version to `33` (Android 13 | Codename: `TIRAMISU`)
