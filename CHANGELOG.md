@@ -1,6 +1,12 @@
+## 0.4.0
+
+* Fixed `ApplicationInfo` parsing failure from various `ComponentInfo`s when requesting for Installed Packages
+* Fixed `requestedPermissions` parsing failure on querying `PackageInfo`
+* Updated integration test for showing example of querying permissions from installed packages using `PackageInfoFlags`. Issue reference [here](https://github.com/nsNeruno/android_package_manager/issues/4)
+
 ## 0.3.2
 
-* Fixed _ApplicationInfo_ parsing failure due to possibly null directories and process name on *Android 13* (credits to [codercengiz](https://github.com/codercengiz))
+* Fixed `ApplicationInfo` parsing failure due to possibly null directories and process name on *Android 13* (credits to [codercengiz](https://github.com/codercengiz))
 
 ## 0.3.0
 

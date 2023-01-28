@@ -32,7 +32,7 @@ fun ActivityInfo.toMap(): Map<String, Any?> {
             putAll(cmpInfo)
         }
         if (isAtLeastAndroid24()) {
-            baseMap["windowLayout"] = windowLayout.toMap()
+            baseMap["windowLayout"] = windowLayout?.toMap()
             if (isAtLeastAndroid26()) {
                 baseMap["colorMode"] = colorMode
             }

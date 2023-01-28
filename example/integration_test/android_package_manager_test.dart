@@ -50,13 +50,19 @@ void main() {
         () async {
           final packages = await pm.getInstalledPackages(
             flags: PackageInfoFlags(
-              {PMFlag.getMetaData,},
+              {
+                PMFlag.getMetaData,
+                PMFlag.getPermissions,
+                PMFlag.getReceivers,
+                PMFlag.getServices,
+                PMFlag.getProviders,
+              },
             ),
           );
           print("BEGIN: getInstalledPackages",);
           print(
             packages?.map(
-              (e) => "${e.packageName} | (${e.applicationInfo != null}) AppInfo.name: ${e.applicationInfo?.name}",
+              (e) => "${e.packageName} | (${e.applicationInfo != null})\n\tAppInfo.name: ${e.applicationInfo?.name}\n\tRequested Permissions: ${e.requestedPermissions}",
             ).join("\n",),
           );
           print("END: getInstalledPackages",);

@@ -1,5 +1,6 @@
 import '../base/activity_info.dart';
 import '../enums.dart';
+import 'application_info.dart';
 
 class ActivityInfoImpl extends ActivityInfo {
   ActivityInfoImpl(Map<String, dynamic> data,) : super(
@@ -23,7 +24,17 @@ class ActivityInfoImpl extends ActivityInfo {
         ? WindowLayoutImpl(data['windowLayout'],)
         : null,
     themeResource: data['themeResource'],
-    componentInfo: data,
+    componentInfo: data.map(
+      (key, value,) {
+        if (key == 'applicationInfo') {
+          return MapEntry(
+            key,
+            ApplicationInfoImpl(Map<String, dynamic>.from(value,),),
+          );
+        }
+        return MapEntry(key, value,);
+      }
+    ),
   );
 
   static LaunchMode _parseLaunchMode(int data,) => LaunchMode.values.asMap()[data]!;
@@ -38,7 +49,12 @@ class ActivityInfoImpl extends ActivityInfo {
 
   static SoftInputState _parseSoftInputMode(int data,) => SoftInputState.values.asMap()[data] ?? SoftInputState.unspecified;
 
-  static RotationAnimation _parseRotationAnimation(int data,) => RotationAnimation.values.asMap()[data + 1] ?? RotationAnimation.unspecified;
+  static RotationAnimation _parseRotationAnimation(Object? data,) {
+    if (data is int) {
+      return RotationAnimation.values.asMap()[data + 1] ?? RotationAnimation.unspecified;
+    }
+    return RotationAnimation.unspecified;
+  }
 }
 
 class WindowLayoutImpl extends WindowLayout {

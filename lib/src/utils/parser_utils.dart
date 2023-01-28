@@ -26,18 +26,11 @@ bool containsBit(int data, int bit,) {
 }
 
 Map<String, dynamic>? safeInferAsMap(dynamic data) {
-  if (data is Map) {
-    final copy = <String, dynamic>{};
-    data.forEach(
-      (key, value) {
-        if (key is String) {
-          copy[key] = value;
-        }
-      },
-    );
-    return copy;
+  try {
+    return Map<String, dynamic>.from(data,);
+  } catch (err) {
+    return null;
   }
-  return null;
 }
 
 T? safeMapParse<T>(dynamic data, T Function(Map<String, dynamic> data) parser,) {

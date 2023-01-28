@@ -54,7 +54,7 @@ class PackageInfoImpl extends PackageInfo {
     reqFeatures: safeListParse<FeatureInfo>(
       data['reqFeatures'], (data) => FeatureInfoImpl(data,),
     ),
-    requestedPermissions: data['requestedPermissions'],
+    requestedPermissions: asTypedList<String>(data['requestedPermissions'],),
     requestedPermissionFlags: data['requestedPermissionFlags'],
     services: safeListParse<ServiceInfo>(
       data['services'], (data) => ServiceInfoImpl(data,),

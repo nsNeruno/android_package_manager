@@ -1,3 +1,5 @@
+import 'package:android_package_manager/src/entities/impl/application_info.dart';
+
 import '../base/provider_info.dart';
 
 class ProviderInfoImpl extends ProviderInfo {
@@ -11,6 +13,16 @@ class ProviderInfoImpl extends ProviderInfo {
     initOrder: data['initOrder'],
     flags: data['flags'],
     forceUriPermissions: data['forceUriPermissions'] ?? false,
-    componentInfo: data,
+    componentInfo: data.map(
+      (key, value) {
+        if (key == 'applicationInfo') {
+          return MapEntry(
+            key,
+            ApplicationInfoImpl(Map<String, dynamic>.from(value,),),
+          );
+        }
+        return MapEntry(key, value,);
+      },
+    ),
   );
 }
