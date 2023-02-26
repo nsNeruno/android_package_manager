@@ -1,4 +1,7 @@
-import '../enums.dart';
+import 'dart:typed_data';
+
+import 'package:android_package_manager/android_package_manager.dart';
+
 import 'component_info.dart';
 
 abstract class ActivityInfo extends ComponentInfo {
@@ -26,6 +29,34 @@ abstract class ActivityInfo extends ComponentInfo {
   }): super(
     Map<String, dynamic>.from(componentInfo ?? {},),
   );
+
+  Future<Uint8List?> getIcon({
+    int quality = 100,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+  }) async {
+    if (packageName != null) {
+      return AndroidPackageManager().getActivityIcon(
+        packageName: packageName!,
+        format: format,
+        quality: quality,
+      );
+    }
+    return null;
+  }
+
+  Future<Uint8List?> getLogo({
+    int quality = 100,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+  }) async {
+    if (packageName != null) {
+      return AndroidPackageManager().getActivityLogo(
+        packageName: packageName!,
+        format: format,
+        quality: quality,
+      );
+    }
+    return null;
+  }
 
   final int? theme;
   final LaunchMode launchMode;

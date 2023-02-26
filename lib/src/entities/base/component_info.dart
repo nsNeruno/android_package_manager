@@ -1,5 +1,7 @@
-import 'application_info.dart';
-import 'package_item_info.dart';
+import 'dart:typed_data';
+
+import 'package:android_package_manager/src/entities/base/application_info.dart';
+import 'package:android_package_manager/src/entities/base/package_item_info.dart';
 
 class ComponentInfo extends PackageItemInfo {
 

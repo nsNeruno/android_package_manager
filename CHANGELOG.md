@@ -1,3 +1,8 @@
+## 0.5.0
+
+* Added access to Activity Icon, Logo, and Application Icon by `packageName`
+* Updated `example` & `integration_test` to showcase Application Icon rendering
+
 ## 0.4.0
 
 * Fixed `ApplicationInfo` parsing failure from various `ComponentInfo`s when requesting for Installed Packages

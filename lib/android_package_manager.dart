@@ -59,6 +59,24 @@ abstract class AndroidPackageManager {
 
   Future<bool?> getApplicationEnabledSetting({required String packageName,});
 
+  Future<Uint8List?> getApplicationIcon({
+    required String packageName,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+    int quality = 100,
+  });
+
+  Future<Uint8List?> getActivityIcon({
+    required String packageName,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+    int quality = 100,
+  });
+
+  Future<Uint8List?> getActivityLogo({
+    required String packageName,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+    int quality = 100,
+  });
+
   Future<bool?> getComponentEnabledSetting({required String packageName,});
 
   Future<Uint8List?> getDefaultActivityIcon();

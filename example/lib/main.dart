@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import 'package:android_package_manager/android_package_manager.dart';
@@ -61,6 +63,25 @@ class _MainPageState extends State<MainPage> {
             ),
             child: Card(
               child: ListTile(
+                leading: SizedBox.square(
+                  dimension: 48.0,
+                  child: FutureBuilder<Uint8List?>(
+                    future: info.getAppIcon(),
+                    builder: (context, snapshot,) {
+                      if (snapshot.hasData) {
+                        final iconBytes = snapshot.data!;
+                        return Image.memory(
+                          iconBytes,
+                          fit: BoxFit.fill,
+                        );
+                      }
+                      if (snapshot.hasError) {
+                        return const Icon(Icons.error, color: Colors.red,);
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
                 title: Text(info.name ?? "No Name",),
                 subtitle: Text(info.packageName ?? "-",),
               ),

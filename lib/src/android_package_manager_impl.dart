@@ -107,6 +107,48 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   );
 
   @override
+  Future<Uint8List?> getApplicationIcon({
+    required String packageName,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+    int quality = 100,
+  }) => _channel.invokeMethod<Uint8List>(
+    "getApplicationIcon",
+    {
+      'packageName': packageName,
+      'quality': quality.clamp(1, 100,),
+      'format': format.index,
+    },
+  );
+
+  @override
+  Future<Uint8List?> getActivityIcon({
+    required String packageName,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+    int quality = 100,
+  }) => _channel.invokeMethod<Uint8List>(
+    "getActivityIcon",
+    {
+      'packageName': packageName,
+      'quality': quality.clamp(1, 100,),
+      'format': format.index,
+    },
+  );
+
+  @override
+  Future<Uint8List?> getActivityLogo({
+    required String packageName,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+    int quality = 100,
+  }) => _channel.invokeMethod<Uint8List>(
+    "getActivityLogo",
+    {
+      'packageName': packageName,
+      'quality': quality.clamp(1, 100,),
+      'format': format.index,
+    },
+  );
+
+  @override
   Future<bool?> getComponentEnabledSetting({required String packageName,}) => _channel.invokeMethod<bool>(
     "getComponentEnabledSetting",
     {"packageName": packageName,},

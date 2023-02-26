@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.NonNull
+import androidx.core.graphics.BitmapCompat
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -507,7 +508,11 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     private fun getActivityBanner(call: MethodCall, result: Result) {
         provideComponentName(call, result)?.let {
             try {
-                sendDrawableResult(packageManager.getActivityBanner(it), result)
+                sendDrawableResult(
+                    packageManager.getActivityBanner(it),
+                    null,
+                    result = result
+                )
             } catch (ex: PackageManager.NameNotFoundException) {
                 result.error(ex.javaClass.name, ex.message, null)
             }
@@ -517,7 +522,12 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     private fun getActivityIcon(call: MethodCall, result: Result) {
         provideComponentName(call, result)?.let {
             try {
-                sendDrawableResult(packageManager.getActivityIcon(it), result)
+                sendDrawableResult(
+                    packageManager.getActivityIcon(it),
+                    call.argument<Int?>("quality"),
+                    call.argument<Int?>("format") ?: 0,
+                    result
+                )
             } catch (ex: PackageManager.NameNotFoundException) {
                 result.error(ex.javaClass.name, ex.message, null)
             }
@@ -541,7 +551,12 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     private fun getActivityLogo(call: MethodCall, result: Result) {
         provideComponentName(call, result)?.let {
             try {
-                sendDrawableResult(packageManager.getActivityLogo(it), result)
+                sendDrawableResult(
+                    packageManager.getActivityLogo(it),
+                    call.argument<Int?>("quality"),
+                    call.argument<Int?>("format") ?: 0,
+                    result
+                )
             } catch (ex: PackageManager.NameNotFoundException) {
                 result.error(ex.javaClass.name, ex.message, null)
             }
@@ -562,7 +577,11 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     private fun getApplicationBanner(call: MethodCall, result: Result) {
         providePackageName(call, result)?.let {
             try {
-                sendDrawableResult(packageManager.getApplicationBanner(it), result)
+                sendDrawableResult(
+                    packageManager.getApplicationBanner(it),
+                    null,
+                    result = result
+                )
             } catch (ex: PackageManager.NameNotFoundException) {
                 result.error(ex.javaClass.name, ex.message, null)
             }
@@ -584,7 +603,12 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     private fun getApplicationIcon(call: MethodCall, result: Result) {
         providePackageName(call, result)?.let {
             try {
-                sendDrawableResult(packageManager.getApplicationIcon(it), result)
+                sendDrawableResult(
+                    packageManager.getApplicationIcon(it),
+                    call.argument<Int?>("quality"),
+                    call.argument<Int?>("format") ?: 0,
+                    result
+                )
             } catch (ex: PackageManager.NameNotFoundException) {
                 result.error(ex.javaClass.name, ex.message, null)
             }
@@ -621,7 +645,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     private fun getDefaultActivityIcon(result: Result) {
-        sendDrawableResult(packageManager.defaultActivityIcon, result)
+        sendDrawableResult(packageManager.defaultActivityIcon, null, result = result)
     }
 
     private fun getInstallSourceInfo(call: MethodCall, result: Result) {
@@ -1537,12 +1561,34 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         }
     }
 
-    private fun sendDrawableResult(drawable: Drawable?, result: Result) {
+    private fun sendDrawableResult(
+        drawable: Drawable?,
+        quality: Int? = null,
+        format: Int = 0,
+        result: Result
+    ) {
+        var nFormat: Bitmap.CompressFormat
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val formats = Bitmap.CompressFormat.values()
+            nFormat = formats[format.coerceIn(0..formats.size)]
+            if (nFormat == Bitmap.CompressFormat.WEBP) {
+                nFormat = Bitmap.CompressFormat.WEBP_LOSSLESS
+            }
+        } else {
+            val formats = listOf(
+                Bitmap.CompressFormat.PNG,
+                Bitmap.CompressFormat.JPEG,
+                Bitmap.CompressFormat.WEBP,
+            )
+            nFormat = formats[format.coerceIn(0..formats.size)]
+        }
         result.success(
             drawable.run {
                 (this as? BitmapDrawable)?.let {
                     ByteArrayOutputStream().use { o ->
-                        it.bitmap.compress(Bitmap.CompressFormat.PNG, 100, o)
+                        it.bitmap.compress(
+                            nFormat, quality ?: 100, o
+                        )
                         o.toByteArray()
                     }
                 }

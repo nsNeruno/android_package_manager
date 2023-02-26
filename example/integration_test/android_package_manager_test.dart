@@ -21,7 +21,18 @@ void main() {
           );
           print("BEGIN: getInstalledApplications",);
           print(
-            applications?.map((e) => "App Name: ${e.name} | Package: ${e.packageName}",).join("\n"),
+            applications?.map(
+              (ApplicationInfo e) {
+                e.getAppIcon().then(
+                  (bytes,) {
+                    print(
+                      'App ${e.name} Icon (${e.packageName}): ${bytes?.length} bytes',
+                    );
+                  },
+                );
+                return "App Name: ${e.name} | Package: ${e.packageName} | Icon, Logo: ${e.icon}, ${e.logo}";
+              },
+            ).join("\n"),
           );
           print("END: getInstalledApplications",);
           expect(applications?.isNotEmpty, true,);
@@ -62,7 +73,27 @@ void main() {
           print("BEGIN: getInstalledPackages",);
           print(
             packages?.map(
-              (e) => "${e.packageName} | (${e.applicationInfo != null})\n\tAppInfo.name: ${e.applicationInfo?.name}\n\tRequested Permissions: ${e.requestedPermissions}",
+              (e) {
+                e.activities?.forEach(
+                  (activity) {
+                    activity.getIcon().then(
+                      (aIcon) {
+                        print(
+                          'Package ${e.packageName} Icon: ${aIcon?.length} bytes',
+                        );
+                      },
+                    );
+                    activity.getLogo().then(
+                      (aLogo) {
+                        print(
+                          'Package ${e.packageName} Logo: ${aLogo?.length} bytes',
+                        );
+                      }
+                    );
+                  },
+                );
+                return "${e.packageName} | (${e.applicationInfo != null})\n\tAppInfo.name: ${e.applicationInfo?.name}\n\tRequested Permissions: ${e.requestedPermissions}";
+              },
             ).join("\n",),
           );
           print("END: getInstalledPackages",);

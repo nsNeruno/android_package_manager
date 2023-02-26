@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:android_package_manager/android_package_manager.dart';
+
 class PackageItemInfo {
 
   PackageItemInfo(Map<String, dynamic> data,)
@@ -13,6 +17,20 @@ class PackageItemInfo {
   static Map<String, dynamic>? _parseMetaData(dynamic data,) {
     if (data is Map) {
       return Map<String, dynamic>.from(data,);
+    }
+    return null;
+  }
+
+  Future<Uint8List?> getAppIcon({
+    int quality = 100,
+    BitmapCompressFormat format = BitmapCompressFormat.png,
+  }) async {
+    if (packageName != null) {
+      return AndroidPackageManager().getApplicationIcon(
+        packageName: packageName!,
+        format: format,
+        quality: quality,
+      );
     }
     return null;
   }

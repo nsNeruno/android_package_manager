@@ -1,5 +1,5 @@
-import '../base/activity_info.dart';
-import '../enums.dart';
+import 'package:android_package_manager/android_package_manager.dart';
+
 import 'application_info.dart';
 
 class ActivityInfoImpl extends ActivityInfo {

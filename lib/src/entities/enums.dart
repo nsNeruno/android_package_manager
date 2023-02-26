@@ -145,3 +145,11 @@ enum VerificationCode {
   allow,
   reject,
 }
+
+enum BitmapCompressFormat {
+  png,
+  jpeg,
+  webp,
+  webpLossy,
+  webpLossless,
+}
