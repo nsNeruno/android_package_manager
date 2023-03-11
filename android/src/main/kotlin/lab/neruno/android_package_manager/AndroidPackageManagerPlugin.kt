@@ -1575,9 +1575,10 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
                 nFormat = Bitmap.CompressFormat.WEBP_LOSSLESS
             }
         } else {
+            // List of formats available for devices with API < 30 (see https://developer.android.com/reference/android/graphics/Bitmap.CompressFormat)
             val formats = listOf(
-                Bitmap.CompressFormat.PNG,
                 Bitmap.CompressFormat.JPEG,
+                Bitmap.CompressFormat.PNG,
                 Bitmap.CompressFormat.WEBP,
             )
             nFormat = formats[format.coerceIn(0..formats.size)]

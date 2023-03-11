@@ -146,9 +146,10 @@ enum VerificationCode {
   reject,
 }
 
+/// Implementing the same order of compression formats as: https://developer.android.com/reference/android/graphics/Bitmap.CompressFormat
 enum BitmapCompressFormat {
-  png,
   jpeg,
+  png,
   webp,
   webpLossy,
   webpLossless,
