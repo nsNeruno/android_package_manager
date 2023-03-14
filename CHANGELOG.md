@@ -1,3 +1,8 @@
+## 0.5.2+1
+
+* Attribution of fixes on `0.5.2` to [PiotrZPL](https://github.com/PiotrZPL)
+* Fixed warning of unused import on `ComponentInfo` class
+
 ## 0.5.2
 
 * Fixed Image Format enum ordering per latest Android API Documentation
