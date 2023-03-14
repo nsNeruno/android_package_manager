@@ -1,3 +1,8 @@
+## 0.5.2
+
+* Fixed Image Format enum ordering per latest Android API Documentation
+* Raised minimum Dart SDK version to `2.19.3`
+
 ## 0.5.0
 
 * Added access to Activity Icon, Logo, and Application Icon by `packageName`
