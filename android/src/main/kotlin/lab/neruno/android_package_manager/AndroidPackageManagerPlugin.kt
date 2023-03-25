@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.Canvas
 import android.os.Build
 import androidx.annotation.NonNull
 import androidx.core.graphics.BitmapCompat
@@ -1585,9 +1586,17 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
         }
         result.success(
             drawable.run {
-                (this as? BitmapDrawable)?.let {
+                (this as? Drawable)?.let {
+                    val bitmap = Bitmap.createBitmap(
+                        it.intrinsicWidth,
+                        it.intrinsicHeight,
+                        Bitmap.Config.ARGB_8888
+                    )
+                    val canvas = Canvas(bitmap)
+                    it.setBounds(0, 0, canvas.width, canvas.height)
+                    it.draw(canvas)
                     ByteArrayOutputStream().use { o ->
-                        it.bitmap.compress(
+                        bitmap.compress(
                             nFormat, quality ?: 100, o
                         )
                         o.toByteArray()
