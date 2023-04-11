@@ -1,3 +1,9 @@
+## 0.5.3
+
+* Added missing support for Android's 
+[AdaptiveIconDrawable](https://developer.android.com/reference/android/graphics/drawable/AdaptiveIconDrawable) 
+when fetching App Icons (credits to [PiotrZPL](https://github.com/PiotrZPL) via PR [#6](https://github.com/nsNeruno/android_package_manager/pull/6))
+
 ## 0.5.2+1
 
 * Attribution of fixes on `0.5.2` to [PiotrZPL](https://github.com/PiotrZPL)
