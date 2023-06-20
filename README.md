@@ -25,6 +25,12 @@ Tested methods can be found at
 ```
 Example Flutter app demonstrates the [getInstalledApplications](https://developer.android.com/reference/android/content/pm/PackageManager#getInstalledApplications(int)) method.
 
+## Optional permissions
+By default, the list of installed apps is limited on Android 11 (API level 30) and higher. Read more about it [here](https://developer.android.com/training/package-visibility). To access the full list of apps installed on a device, add the following permission to your `AndroidManifest.xml` file:
+```xml
+<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+```
+
 ## TO-DOs
 - Proper documentation
 - DartDocs
