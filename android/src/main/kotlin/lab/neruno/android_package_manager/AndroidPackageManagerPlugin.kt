@@ -223,7 +223,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activityContext = binding.activity
         if (activityContext != null) {
-            packageManager = activityContext.PackageManager
+            packageManager = binding.activity.packageManager
         }
     }
 
