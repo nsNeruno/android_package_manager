@@ -18,7 +18,7 @@ abstract class AndroidPackageManager {
 
   AndroidPackageManager._();
 
-  static late final AndroidPackageManager _pm = AndroidPackageManagerImpl();
+  static final AndroidPackageManager _pm = AndroidPackageManagerImpl();
 
   factory AndroidPackageManager() {
     if (!Platform.isAndroid) {
