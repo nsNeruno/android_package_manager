@@ -33,6 +33,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
 
     private lateinit var packageManager: PackageManager
     private lateinit var activityContext: Context
+    private lateinit var context: Context
     
     companion object {
         @JvmStatic
@@ -48,6 +49,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "android_package_manager")
         channel.setMethodCallHandler(this)
+        context = flutterPluginBinding.applicationContext
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -217,7 +219,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        packageManager = binding.activity.packageManager
+        packageManager = context.packageManager
         activityContext = binding.activity
     }
 
