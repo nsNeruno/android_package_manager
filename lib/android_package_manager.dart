@@ -81,6 +81,9 @@ abstract class AndroidPackageManager {
 
   Future<Uint8List?> getDefaultActivityIcon();
 
+  /// Available for SDK Int >= 30 (Android R)
+  Future<InstallSourceInfo?> getInstallSourceInfo({required String packageName,});
+
   Future<List<ApplicationInfo>?> getInstalledApplications({
     ApplicationInfoFlags? flags,
   }) => throw UnimplementedError();
@@ -88,6 +91,9 @@ abstract class AndroidPackageManager {
   Future<List<PackageInfo>?> getInstalledPackages({
     PackageInfoFlags? flags,
   }) => throw UnimplementedError();
+
+  /// Available for SDK Int < 30 (before Android R)
+  Future<String?> getInstallerPackageName({required String packageName,});
 
   Future<InstrumentationInfo?> getInstrumentationInfo({
     required ComponentName componentName,

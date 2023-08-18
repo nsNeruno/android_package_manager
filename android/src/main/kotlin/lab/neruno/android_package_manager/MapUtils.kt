@@ -209,18 +209,7 @@ fun InstallSourceInfo.toMap(): Map<String, Any?> = mapOf(
     "initiatingPackageName" to initiatingPackageName,
     "installingPackageName" to installingPackageName,
     "originatingPackageName" to originatingPackageName,
-    "initiatingPackageSigningInfo" to initiatingPackageSigningInfo?.run {
-        mapOf(
-            "apkContentSigners" to apkContentsSigners?.toList()?.map {
-                it.toByteArray()
-            },
-            "signingCertificateHistory" to signingCertificateHistory?.toList()?.map {
-                it.toByteArray()
-            },
-            "hasMultipleSigners" to hasMultipleSigners(),
-            "hasPastSigningCertificates" to hasPastSigningCertificates()
-        )
-    }
+    "initiatingPackageSigningInfo" to initiatingPackageSigningInfo?.toMap()
 )
 
 fun InstrumentationInfo.toMap(): Map<String, Any?> {

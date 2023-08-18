@@ -11,33 +11,6 @@ void main() {
     "Feature tests",
     () {
       final pm = AndroidPackageManager();
-      test(
-        "getInstalledApplications",
-        () async {
-          final applications = await pm.getInstalledApplications(
-            flags: ApplicationInfoFlags(
-              {PMFlag.getMetaData,},
-            ),
-          );
-          print("BEGIN: getInstalledApplications",);
-          print(
-            applications?.map(
-              (ApplicationInfo e) {
-                e.getAppIcon().then(
-                  (bytes,) {
-                    print(
-                      'App ${e.name} Icon (${e.packageName}): ${bytes?.length} bytes',
-                    );
-                  },
-                );
-                return "App Name: ${e.name} | Package: ${e.packageName} | Icon, Logo: ${e.icon}, ${e.logo}";
-              },
-            ).join("\n"),
-          );
-          print("END: getInstalledApplications",);
-          expect(applications?.isNotEmpty, true,);
-        },
-      );
 
       test(
         "getAllPermissionGroups",
@@ -53,51 +26,6 @@ void main() {
           );
           print("END: getAllPermissionGroups",);
           expect(permissionGroups != null, true,);
-        },
-      );
-
-      test(
-        "getInstalledPackages",
-        () async {
-          final packages = await pm.getInstalledPackages(
-            flags: PackageInfoFlags(
-              {
-                PMFlag.getMetaData,
-                PMFlag.getPermissions,
-                PMFlag.getReceivers,
-                PMFlag.getServices,
-                PMFlag.getProviders,
-              },
-            ),
-          );
-          print("BEGIN: getInstalledPackages",);
-          print(
-            packages?.map(
-              (e) {
-                e.activities?.forEach(
-                  (activity) {
-                    activity.getIcon().then(
-                      (aIcon) {
-                        print(
-                          'Package ${e.packageName} Icon: ${aIcon?.length} bytes',
-                        );
-                      },
-                    );
-                    activity.getLogo().then(
-                      (aLogo) {
-                        print(
-                          'Package ${e.packageName} Logo: ${aLogo?.length} bytes',
-                        );
-                      }
-                    );
-                  },
-                );
-                return "${e.packageName} | (${e.applicationInfo != null})\n\tAppInfo.name: ${e.applicationInfo?.name}\n\tRequested Permissions: ${e.requestedPermissions}";
-              },
-            ).join("\n",),
-          );
-          print("END: getInstalledPackages",);
-          expect(packages != null, true,);
         },
       );
 

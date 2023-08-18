@@ -1,3 +1,8 @@
+## 0.5.4
+
+* Added `getInstallSourceInfo` and access to deprecated `getInstallerPackageName` for devices running versions below `Android R` (*SDK Int* `30`)
+* Separated some integration test files
+
 ## 0.5.3
 
 * Added missing support for Android's 

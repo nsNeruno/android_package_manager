@@ -175,6 +175,22 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }
 
   @override
+  Future<InstallSourceInfo?> getInstallSourceInfo({
+    required String packageName,
+  }) async {
+    final sourceInfo = await _channel.invokeMapMethod(
+      'getInstallSourceInfo',
+      {'packageName': packageName,},
+    );
+    if (sourceInfo != null) {
+      return InstallSourceInfoImpl(
+        Map<String, dynamic>.from(sourceInfo,),
+      );
+    }
+    return null;
+  }
+
+  @override
   Future<List<PackageInfo>?> getInstalledPackages({
     PackageInfoFlags? flags,
   }) async {
@@ -187,6 +203,15 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
         Map<String, dynamic>.from(data,),
       ),
     ).toList(growable: false,);
+  }
+
+  @override
+  Future<String?> getInstallerPackageName({required String packageName}) async {
+    final installerPackageName = await _channel.invokeMethod(
+      'getInstallerPackageName',
+      {'packageName': packageName,},
+    );
+    return installerPackageName?.toString();
   }
 
   @override

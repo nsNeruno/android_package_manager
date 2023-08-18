@@ -92,6 +92,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             "getInstalledApplications" -> getInstalledApplications(call, result)
             "getInstalledModules" -> getInstalledModules(result)
             "getInstalledPackages" -> getInstalledPackages(call, result)
+            "getInstallerPackageName" -> getInstallerPackageName(call, result)
             "getInstantAppCookie" -> getInstantAppCookie(result)
             "getInstantAppCookieMaxBytes" -> getInstantAppCookieMaxBytes(result)
             "getInstrumentationInfo" -> getInstrumentationInfo(call, result)
@@ -705,6 +706,16 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
                 it.toMap()
             }}
         )
+    }
+
+    private fun getInstallerPackageName(call: MethodCall, result: Result) {
+        if (isAtLeastAndroid30()) {
+            result.success(null)
+            return
+        }
+        providePackageName(call, result)?.let {
+            result.success(packageManager.getInstallerPackageName(it))
+        }
     }
 
     private fun getInstantAppCookie(result: Result) {
