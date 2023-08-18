@@ -49,7 +49,9 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "android_package_manager")
         channel.setMethodCallHandler(this)
-        context = flutterPluginBinding.applicationContext
+        if (packageManager == null) {
+            packageManager = flutterPluginBinding.applicationContext.packageManager
+        }
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -219,7 +221,6 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        packageManager = context.packageManager
         activityContext = binding.activity
         if (activityContext != null) {
             packageManager = activityContext.PackageManager
