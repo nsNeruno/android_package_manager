@@ -250,6 +250,7 @@ fun PackageInfo.toMap(): Map<String, Any?> {
         "packageName" to packageName,
         "splitNames" to splitNames?.toList<String>(),
         "versionName" to versionName,
+        "versionCode" to versionCode,
         "sharedUserId" to sharedUserId,
         "sharedUserLabel" to sharedUserLabel,
         "applicationInfo" to applicationInfo?.toMap(),

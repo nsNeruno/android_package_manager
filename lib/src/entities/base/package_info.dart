@@ -10,30 +10,29 @@ import 'provider_info.dart';
 import 'service_info.dart';
 
 abstract class PackageInfo {
-
-  const PackageInfo({
-    this.activities,
-    this.applicationInfo,
-    this.configPreferences,
-    this.featureGroups,
-    this.firstInstallTime,
-    this.gids,
-    required this.installLocation,
-    this.instrumentation,
-    this.lastUpdateTime,
-    this.packageName,
-    this.permissions,
-    this.providers,
-    this.receivers,
-    this.reqFeatures,
-    this.requestedPermissions,
-    this.requestedPermissionFlags,
-    this.services,
-    this.sharedUserId,
-    this.sharedUserLabel,
-    this.splitNames,
-    this.versionName,
-  });
+  const PackageInfo(
+      {this.activities,
+      this.applicationInfo,
+      this.configPreferences,
+      this.featureGroups,
+      this.firstInstallTime,
+      this.gids,
+      required this.installLocation,
+      this.instrumentation,
+      this.lastUpdateTime,
+      this.packageName,
+      this.permissions,
+      this.providers,
+      this.receivers,
+      this.reqFeatures,
+      this.requestedPermissions,
+      this.requestedPermissionFlags,
+      this.services,
+      this.sharedUserId,
+      this.sharedUserLabel,
+      this.splitNames,
+      this.versionName,
+      this.versionCode});
 
   final List<ActivityInfo>? activities;
   final ApplicationInfo? applicationInfo;
@@ -56,4 +55,5 @@ abstract class PackageInfo {
   final int? sharedUserLabel;
   final List<String>? splitNames;
   final String? versionName;
+  final int? versionCode;
 }
