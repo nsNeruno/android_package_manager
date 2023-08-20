@@ -78,10 +78,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             "getApplicationBanner" -> getApplicationBanner(call, result)
             "getApplicationEnabledSetting" -> getApplicationEnabledSetting(call, result)
             "getApplicationIcon" -> getApplicationIcon(call, result)
-            "getApplicationLabel" -> {
-                // TODO: Research for [ActivityInfo] required
-                result.success(null)
-            }
+            "getApplicationLabel" -> getApplicationLabel(call, result)
             "getBackgroundPermissionOptionLabel" -> getBackgroundPermissionOptionLabel(result)
             "getChangedPackages" -> getChangedPackages(call, result)
             "getComponentEnabledSetting" -> getComponentEnabledSetting(call, result)
@@ -612,6 +609,18 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
                     call.argument<Int?>("quality"),
                     call.argument<Int?>("format") ?: 0,
                     result
+                )
+            } catch (ex: PackageManager.NameNotFoundException) {
+                result.error(ex.javaClass.name, ex.message, null)
+            }
+        }
+    }
+
+    private fun getApplicationLabel(call: MethodCall, result: Result) {
+        providePackageName(call, result)?.let {
+            try {
+                result.success(
+                    packageManager.getApplicationLabel(packageManager.getApplicationInfo(it, 0))
                 )
             } catch (ex: PackageManager.NameNotFoundException) {
                 result.error(ex.javaClass.name, ex.message, null)

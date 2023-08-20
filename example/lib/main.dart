@@ -91,8 +91,12 @@ class _MainPageState extends State<MainPage> {
                     },
                   ),
                 ),
-                title: Text(
-                  info.applicationInfo?.name ?? "No Name",
+                title: FutureBuilder<String?>(
+                  future: AndroidPackageManager()
+                      .getApplicationLabel(packageName: info.packageName!),
+                  builder: (context, snapshot) => Text(
+                    snapshot.data ?? "No Name",
+                  ),
                 ),
                 subtitle: Text('${info.packageName} (${info.versionCode})'),
               ),
