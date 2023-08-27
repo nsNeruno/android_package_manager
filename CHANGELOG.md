@@ -1,3 +1,11 @@
+## 0.6.0
+
+* Enabled support for latest stable Flutter versions (raised max SDK constraints to 4.0.0)
+* \[PackageInfo\] Added [versionCode](https://developer.android.com/reference/android/content/pm/PackageInfo#versionCode) property (by [ImranR98](https://github.com/ImranR98) under [#11](https://github.com/nsNeruno/android_package_manager/pull/11))
+* Updated `example`
+* \[Native/Experimental\] Added possibility of using multiple source of `PackageManager` from different `Context`s if the plugin is being used under Isolates (by [ImranR98](https://github.com/ImranR98) under [#11](https://github.com/nsNeruno/android_package_manager/pull/11))
+* Added [getApplicationLabel](https://developer.android.com/reference/android/content/pm/PackageManager#getApplicationLabel(android.content.pm.ApplicationInfo)) method (by [ImranR98](https://github.com/ImranR98) under [#11](https://github.com/nsNeruno/android_package_manager/pull/11))
+
 ## 0.5.4
 
 * Added `getInstallSourceInfo` and access to deprecated `getInstallerPackageName` for devices running versions below `Android R` (*SDK Int* `30`)
