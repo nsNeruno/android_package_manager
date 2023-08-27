@@ -10,7 +10,6 @@ import 'provider_info.dart';
 import 'service_info.dart';
 
 abstract class PackageInfo {
-
   const PackageInfo({
     this.activities,
     this.applicationInfo,
@@ -33,6 +32,7 @@ abstract class PackageInfo {
     this.sharedUserLabel,
     this.splitNames,
     this.versionName,
+    this.versionCode,
   });
 
   final List<ActivityInfo>? activities;
@@ -56,4 +56,5 @@ abstract class PackageInfo {
   final int? sharedUserLabel;
   final List<String>? splitNames;
   final String? versionName;
+  final int? versionCode;
 }
