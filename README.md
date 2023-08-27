@@ -7,6 +7,19 @@ This plugin is purposed for Android use only. Allowing easier access to most com
 
 ## Getting Started
 
+### WARNING
+```
+This is a legacy branch to allow older projects not yet supporting Dart 3.0 to use this plugin.
+```
+Implementation via `pubspec.yaml`:
+```yaml
+dependencies:
+  android_package_manager:
+    git:
+      url: https://github.com/nsNeruno/android_package_manager.git
+      ref: under_dart_3
+```
+
 Importing:
 ```dart
 import package:android_package_manager/android_package_manager.dart;
