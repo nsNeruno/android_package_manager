@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
-
   const MainPage({Key? key}) : super(key: key);
 
   @override
@@ -32,11 +31,10 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
   @override
   void initState() {
     super.initState();
-    AndroidPackageManager().getInstalledApplications().then(
+    _pm.getInstalledPackages().then(
       (value) => setState(
         () => _applicationInfoList = value,
       ),
@@ -45,17 +43,22 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-
     final appInfo = _applicationInfoList;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Android Package Manager Demo",),
+        title: const Text(
+          "Android Package Manager Demo",
+        ),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(
-          horizontal: 24.0, vertical: 32.0,
+          horizontal: 24.0,
+          vertical: 32.0,
         ),
-        itemBuilder: (_, index,) {
+        itemBuilder: (
+          _,
+          index,
+        ) {
           final info = appInfo![index];
           return Padding(
             padding: const EdgeInsets.symmetric(
@@ -66,8 +69,11 @@ class _MainPageState extends State<MainPage> {
                 leading: SizedBox.square(
                   dimension: 48.0,
                   child: FutureBuilder<Uint8List?>(
-                    future: info.getAppIcon(),
-                    builder: (context, snapshot,) {
+                    future: info.applicationInfo?.getAppIcon(),
+                    builder: (
+                      context,
+                      snapshot,
+                    ) {
                       if (snapshot.hasData) {
                         final iconBytes = snapshot.data!;
                         return Image.memory(
@@ -76,14 +82,22 @@ class _MainPageState extends State<MainPage> {
                         );
                       }
                       if (snapshot.hasError) {
-                        return const Icon(Icons.error, color: Colors.red,);
+                        return const Icon(
+                          Icons.error,
+                          color: Colors.red,
+                        );
                       }
                       return const SizedBox.shrink();
                     },
                   ),
                 ),
-                title: Text(info.name ?? "No Name",),
-                subtitle: Text(info.packageName ?? "-",),
+                title: FutureBuilder<String?>(
+                  future: _pm.getApplicationLabel(packageName: info.packageName!),
+                  builder: (context, snapshot) => Text(
+                    snapshot.data ?? "No Name",
+                  ),
+                ),
+                subtitle: Text('${info.packageName} (${info.versionCode})'),
               ),
             ),
           );
@@ -93,5 +107,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  List<ApplicationInfo>? _applicationInfoList;
+  List<PackageInfo>? _applicationInfoList;
+  AndroidPackageManager get _pm => AndroidPackageManager();
 }
