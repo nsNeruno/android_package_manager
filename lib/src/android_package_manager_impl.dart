@@ -1,10 +1,11 @@
 part of '../android_package_manager.dart';
 
 class AndroidPackageManagerImpl extends AndroidPackageManager {
+  AndroidPackageManagerImpl() : super._();
 
-  AndroidPackageManagerImpl(): super._();
-
-  static const MethodChannel _channel = MethodChannel('android_package_manager',);
+  static const MethodChannel _channel = MethodChannel(
+    'android_package_manager',
+  );
 
   static const Map<int, CheckPermissionStatus> _checkPermissionResultMap = {
     0: CheckPermissionStatus.granted,
@@ -39,35 +40,51 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   Future<List<String>?> canonicalToCurrentPackageNames({
     required List<String> packageNames,
   }) => _channel.invokeListMethod<String>(
-    "canonicalToCurrentPackageNames", {"packageNames": packageNames,},
+    "canonicalToCurrentPackageNames",
+    {
+      "packageNames": packageNames,
+    },
   );
 
   @override
   Future<CheckPermissionStatus?> checkPermission({
-    required String packageName, required String permName,
+    required String packageName,
+    required String permName,
   }) async {
     final checkResult = await _channel.invokeMethod<int>(
-      "checkPermission", {"packageName": packageName, "permName": permName,},
+      "checkPermission",
+      {
+        "packageName": packageName,
+        "permName": permName,
+      },
     );
     return _checkPermissionResultMap[checkResult];
   }
 
   @override
   Future<SignatureCheckResult> checkSignatures({
-    required String packageName1, required String packageName2,
+    required String packageName1,
+    required String packageName2,
   }) async {
     final checkResult = await _channel.invokeMethod<int>(
       "checkSignatures",
-      {"packageName1": packageName1, "packageName2": packageName2,},
+      {
+        "packageName1": packageName1,
+        "packageName2": packageName2,
+      },
     );
-    return _signatureCheckResultMap[checkResult] ?? SignatureCheckResult.unknownPackage;
+    return _signatureCheckResultMap[checkResult] ??
+        SignatureCheckResult.unknownPackage;
   }
 
   @override
   Future<List<String>?> currentToCanonicalPackageNames({
     required List<String> packageNames,
   }) => _channel.invokeListMethod<String>(
-    "currentToCanonicalPackageNames", {"packageNames": packageNames,},
+    "currentToCanonicalPackageNames",
+    {
+      "packageNames": packageNames,
+    },
   );
 
   @override
@@ -81,7 +98,8 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
       ActivityResourceType.logo: "getActivityLogo",
     };
     return _channel.invokeMethod<Uint8List>(
-      availableMethods[type]!, componentName.asMap,
+      availableMethods[type]!,
+      componentName.asMap,
     );
   }
 
@@ -91,19 +109,31 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }) async {
     final permissionGroupsData = await _channel.invokeListMethod(
       "getAllPermissionGroups",
-      {"flags": flags?.flags,},
+      {
+        "flags": flags?.flags,
+      },
     );
-    return permissionGroupsData?.map<PermissionGroupInfo>(
-      (data) => PermissionGroupInfoImpl(
-        Map<String, dynamic>.from(data,),
-      ),
-    ).toList(growable: false,);
+    return permissionGroupsData
+        ?.map<PermissionGroupInfo>(
+          (data) => PermissionGroupInfoImpl(
+            Map<String, dynamic>.from(
+              data,
+            ),
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
-  Future<bool?> getApplicationEnabledSetting({required String packageName,}) => _channel.invokeMethod<bool>(
+  Future<bool?> getApplicationEnabledSetting({
+    required String packageName,
+  }) => _channel.invokeMethod<bool>(
     "getApplicationEnabledSetting",
-    {"packageName": packageName,},
+    {
+      "packageName": packageName,
+    },
   );
 
   @override
@@ -121,43 +151,69 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   );
 
   @override
+  Future<String?> getApplicationLabel({
+    required String packageName,
+    ApplicationInfoFlags? flags,
+  }) => _channel.invokeMethod<String>(
+    "getApplicationLabel",
+    {
+      "packageName": packageName,
+      'flags': flags?.flags,
+    },
+  );
+
+  @override
   Future<Uint8List?> getActivityIcon({
     required String packageName,
     BitmapCompressFormat format = BitmapCompressFormat.png,
     int quality = 100,
-  }) => _channel.invokeMethod<Uint8List>(
-    "getActivityIcon",
-    {
-      'packageName': packageName,
-      'quality': quality.clamp(1, 100,),
-      'format': format.index,
-    },
-  );
+  }) =>
+      _channel.invokeMethod<Uint8List>(
+        "getActivityIcon",
+        {
+          'packageName': packageName,
+          'quality': quality.clamp(
+            1,
+            100,
+          ),
+          'format': format.index,
+        },
+      );
 
   @override
   Future<Uint8List?> getActivityLogo({
     required String packageName,
     BitmapCompressFormat format = BitmapCompressFormat.png,
     int quality = 100,
-  }) => _channel.invokeMethod<Uint8List>(
-    "getActivityLogo",
-    {
-      'packageName': packageName,
-      'quality': quality.clamp(1, 100,),
-      'format': format.index,
-    },
-  );
+  }) =>
+      _channel.invokeMethod<Uint8List>(
+        "getActivityLogo",
+        {
+          'packageName': packageName,
+          'quality': quality.clamp(
+            1,
+            100,
+          ),
+          'format': format.index,
+        },
+      );
 
   @override
-  Future<bool?> getComponentEnabledSetting({required String packageName,}) => _channel.invokeMethod<bool>(
-    "getComponentEnabledSetting",
-    {"packageName": packageName,},
-  );
+  Future<bool?> getComponentEnabledSetting({
+    required String packageName,
+  }) =>
+      _channel.invokeMethod<bool>(
+        "getComponentEnabledSetting",
+        {
+          "packageName": packageName,
+        },
+      );
 
   @override
-  Future<Uint8List?> getDefaultActivityIcon() => _channel.invokeMethod<Uint8List>(
-    "getDefaultActivityIcon",
-  );
+  Future<Uint8List?> getDefaultActivityIcon() =>
+      _channel.invokeMethod<Uint8List>(
+        "getDefaultActivityIcon",
+      );
 
   @override
   Future<List<ApplicationInfo>?> getInstalledApplications({
@@ -165,13 +221,21 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }) async {
     final installedApplicationsData = await _channel.invokeListMethod(
       "getInstalledApplications",
-      {"flags": flags?.flags,},
+      {
+        "flags": flags?.flags,
+      },
     );
-    return installedApplicationsData?.map<ApplicationInfo>(
-      (data) => ApplicationInfoImpl(
-        Map<String, dynamic>.from(data,),
-      ),
-    ).toList(growable: false,);
+    return installedApplicationsData
+        ?.map<ApplicationInfo>(
+          (data) => ApplicationInfoImpl(
+            Map<String, dynamic>.from(
+              data,
+            ),
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
@@ -180,11 +244,15 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }) async {
     final sourceInfo = await _channel.invokeMapMethod(
       'getInstallSourceInfo',
-      {'packageName': packageName,},
+      {
+        'packageName': packageName,
+      },
     );
     if (sourceInfo != null) {
       return InstallSourceInfoImpl(
-        Map<String, dynamic>.from(sourceInfo,),
+        Map<String, dynamic>.from(
+          sourceInfo,
+        ),
       );
     }
     return null;
@@ -196,20 +264,30 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }) async {
     final installedPackagesData = await _channel.invokeListMethod(
       "getInstalledPackages",
-      {"flags": flags?.flags,},
+      {
+        "flags": flags?.flags,
+      },
     );
-    return installedPackagesData?.map<PackageInfo>(
-      (data) => PackageInfoImpl(
-        Map<String, dynamic>.from(data,),
-      ),
-    ).toList(growable: false,);
+    return installedPackagesData
+        ?.map<PackageInfo>(
+          (data) => PackageInfoImpl(
+            Map<String, dynamic>.from(
+              data,
+            ),
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
   Future<String?> getInstallerPackageName({required String packageName}) async {
     final installerPackageName = await _channel.invokeMethod(
       'getInstallerPackageName',
-      {'packageName': packageName,},
+      {
+        'packageName': packageName,
+      },
     );
     return installerPackageName?.toString();
   }
@@ -234,12 +312,16 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
 
   @override
   Future<String?> getNameForUid(int uid) => _channel.invokeMethod<String>(
-    "getNameForUid", {'uid': uid,},
-  );
+        "getNameForUid",
+        {
+          'uid': uid,
+        },
+      );
 
   @override
   Future<PackageInfo?> getPackageArchiveInfo({
-    required String archiveFilePath, PackageInfoFlags? flags,
+    required String archiveFilePath,
+    PackageInfoFlags? flags,
   }) async {
     final packageData = await _channel.invokeMethod(
       "getPackageArchiveInfo",
@@ -250,7 +332,9 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
     );
     if (packageData != null) {
       return PackageInfoImpl(
-        Map<String, dynamic>.from(packageData,),
+        Map<String, dynamic>.from(
+          packageData,
+        ),
       );
     }
     return null;
@@ -260,9 +344,13 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   Future<List<int>?> getPackageGids({required String packageName}) async {
     final data = await _channel.invokeListMethod(
       "getPackageGids",
-      {"packageName": packageName,},
+      {
+        "packageName": packageName,
+      },
     );
-    return data?.whereType<int>().toList(growable: false,);
+    return data?.whereType<int>().toList(
+          growable: false,
+        );
   }
 
   @override
@@ -272,11 +360,16 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }) async {
     final packageData = await _channel.invokeMethod(
       "getPackageInfo",
-      {"packageName": packageName, "flags": flags?.flags,},
+      {
+        "packageName": packageName,
+        "flags": flags?.flags,
+      },
     );
     if (packageData != null) {
       return PackageInfoImpl(
-        Map<String, dynamic>.from(packageData,),
+        Map<String, dynamic>.from(
+          packageData,
+        ),
       );
     }
     return null;
@@ -284,31 +377,50 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
 
   @override
   Future<List<String>?> getPackagesForUid(int uid) async {
-    final data = await _channel.invokeListMethod(
-      "getPackagesForUid", {"uid": uid,}
-    );
-    return data?.whereType<String>().toList(growable: false,);
+    final data = await _channel.invokeListMethod("getPackagesForUid", {
+      "uid": uid,
+    });
+    return data?.whereType<String>().toList(
+          growable: false,
+        );
   }
 
   @override
-  Future<List<PackageInfo>?> getPackagesHoldingPermissions(Set<String> permissions) async {
+  Future<List<PackageInfo>?> getPackagesHoldingPermissions(
+      Set<String> permissions) async {
     final packagesData = await _channel.invokeListMethod(
       "getPackagesHoldingPermissions",
-      {"permissions": permissions.toList(),},
+      {
+        "permissions": permissions.toList(),
+      },
     );
-    return packagesData?.whereType<Map<String, dynamic>>().map(
-      (e) => PackageInfoImpl(e,),
-    ).toList(growable: false,);
+    return packagesData
+        ?.whereType<Map<String, dynamic>>()
+        .map(
+          (e) => PackageInfoImpl(
+            e,
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
-  Future<PermissionGroupInfo?> getPermissionGroupInfo(String packageName,) async {
+  Future<PermissionGroupInfo?> getPermissionGroupInfo(
+    String packageName,
+  ) async {
     final infoData = await _channel.invokeMethod(
-      "getPermissionGroupInfo", {"packageName": packageName,},
+      "getPermissionGroupInfo",
+      {
+        "packageName": packageName,
+      },
     );
     if (infoData != null) {
       return PermissionGroupInfoImpl(
-        Map<String, dynamic>.from(infoData,),
+        Map<String, dynamic>.from(
+          infoData,
+        ),
       );
     }
     return null;
@@ -317,11 +429,16 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   @override
   Future<PermissionInfo?> getPermissionInfo(String permName) async {
     final infoData = await _channel.invokeMethod(
-      "getPermissionInfo", {"permName": permName,},
+      "getPermissionInfo",
+      {
+        "permName": permName,
+      },
     );
     if (infoData != null) {
       return PermissionInfoImpl(
-        Map<String, dynamic>.from(infoData,),
+        Map<String, dynamic>.from(
+          infoData,
+        ),
       );
     }
     return null;
@@ -334,25 +451,36 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }) async {
     final providerData = await _channel.invokeMethod(
       "getProviderInfo",
-      {...componentName.asMap, "flags": flags?.flags,},
+      {
+        ...componentName.asMap,
+        "flags": flags?.flags,
+      },
     );
     if (providerData != null) {
       return ProviderInfoImpl(
-        Map<String, dynamic>.from(providerData,),
+        Map<String, dynamic>.from(
+          providerData,
+        ),
       );
     }
     return null;
   }
 
   @override
-  Future<ActivityInfo?> getReceiverInfo({required ComponentName componentName, ComponentInfoFlags? flags}) async {
+  Future<ActivityInfo?> getReceiverInfo(
+      {required ComponentName componentName, ComponentInfoFlags? flags}) async {
     final receiverData = await _channel.invokeMethod(
       "getReceiverInfo",
-      {...componentName.asMap, "flags": flags?.flags,},
+      {
+        ...componentName.asMap,
+        "flags": flags?.flags,
+      },
     );
     if (receiverData != null) {
       return ActivityInfoImpl(
-        Map<String, dynamic>.from(receiverData,),
+        Map<String, dynamic>.from(
+          receiverData,
+        ),
       );
     }
     return null;
@@ -360,15 +488,21 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
 
   @override
   Future<ServiceInfo?> getServiceInfo({
-    required ComponentName componentName, ComponentInfoFlags? flags,
+    required ComponentName componentName,
+    ComponentInfoFlags? flags,
   }) async {
     final serviceData = await _channel.invokeMethod(
       "getServiceInfo",
-      {...componentName.asMap, "flags": flags?.flags,},
+      {
+        ...componentName.asMap,
+        "flags": flags?.flags,
+      },
     );
     if (serviceData != null) {
       return ServiceInfoImpl(
-        Map<String, dynamic>.from(serviceData,),
+        Map<String, dynamic>.from(
+          serviceData,
+        ),
       );
     }
     return null;
@@ -379,9 +513,16 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
     final featureData = await _channel.invokeListMethod(
       "getSystemAvailableFeatures",
     );
-    return featureData?.whereType<Map<String, dynamic>>().map(
-      (e) => FeatureInfoImpl(e,),
-    ).toList(growable: false,);
+    return featureData
+        ?.whereType<Map<String, dynamic>>()
+        .map(
+          (e) => FeatureInfoImpl(
+            e,
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
@@ -389,31 +530,49 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
     final nameData = await _channel.invokeListMethod(
       "getSystemSharedLibraryNames",
     );
-    return nameData?.whereType<String>().toList(growable: false,);
+    return nameData?.whereType<String>().toList(
+          growable: false,
+        );
   }
 
   @override
-  Future<bool> hasSystemFeature({required String featureName, int? version}) => _channel.invokeMethod(
-    "hasSystemFeature",
-    {"featureName": featureName, "version": version,},
-  ).then((result) => result == true,);
+  Future<bool> hasSystemFeature({required String featureName, int? version}) =>
+      _channel.invokeMethod(
+        "hasSystemFeature",
+        {
+          "featureName": featureName,
+          "version": version,
+        },
+      ).then(
+        (result) => result == true,
+      );
 
   @override
-  Future<bool> isSafeMode() => _channel.invokeMethod("isSafeMode",).then(
-    (result) => result == true,
-  );
+  Future<bool> isSafeMode() => _channel
+      .invokeMethod(
+        "isSafeMode",
+      )
+      .then(
+        (result) => result == true,
+      );
 
   @override
   Future<void> launchLeanback(String packageName) async {
     await _channel.invokeMethod(
-      "launchLeanback", {"packageName": packageName,},
+      "launchLeanback",
+      {
+        "packageName": packageName,
+      },
     );
   }
 
   @override
   Future<void> openApp(String packageName) async {
     await _channel.invokeMethod(
-      "openApp", {"packageName": packageName,},
+      "openApp",
+      {
+        "packageName": packageName,
+      },
     );
   }
 
@@ -425,47 +584,88 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
   }) async {
     final providerData = await _channel.invokeListMethod(
       "queryContentProviders",
-      {"uid": uid, "processName": processName, "flags": flags?.flags,},
+      {
+        "uid": uid,
+        "processName": processName,
+        "flags": flags?.flags,
+      },
     );
-    return providerData?.whereType<Map<String, dynamic>>().map(
-      (e) => ProviderInfoImpl(e,),
-    ).toList(growable: false,);
+    return providerData
+        ?.whereType<Map<String, dynamic>>()
+        .map(
+          (e) => ProviderInfoImpl(
+            e,
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
-  Future<List<InstrumentationInfo>?> queryInstrumentation(String targetPackage,) async {
-    final info = await _channel.invokeListMethod("queryInstrumentation",);
-    return info?.whereType<Map<String, dynamic>>().map(
-      (e) => InstrumentationInfoImpl(e,),
-    ).toList(growable: false,);
+  Future<List<InstrumentationInfo>?> queryInstrumentation(
+    String targetPackage,
+  ) async {
+    final info = await _channel.invokeListMethod(
+      "queryInstrumentation",
+    );
+    return info
+        ?.whereType<Map<String, dynamic>>()
+        .map(
+          (e) => InstrumentationInfoImpl(
+            e,
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
-  Future<List<PermissionInfo>?> queryPermissionsByGroup(String permissionGroup) async {
-    final info = await _channel.invokeListMethod("queryPermissionsByGroup",);
-    return info?.whereType<Map<String, dynamic>>().map(
-      (e) => PermissionInfoImpl(e,),
-    ).toList(growable: false,);
+  Future<List<PermissionInfo>?> queryPermissionsByGroup(
+      String permissionGroup) async {
+    final info = await _channel.invokeListMethod(
+      "queryPermissionsByGroup",
+    );
+    return info
+        ?.whereType<Map<String, dynamic>>()
+        .map(
+          (e) => PermissionInfoImpl(
+            e,
+          ),
+        )
+        .toList(
+          growable: false,
+        );
   }
 
   @override
   Future<void> removePermission(String permName) async {
     await _channel.invokeMethod(
-      "removePermission", {"permName": permName,},
+      "removePermission",
+      {
+        "permName": permName,
+      },
     );
   }
 
   @override
   Future<ProviderInfo?> resolveContentProvider({
-    required String authority, ComponentInfoFlags? flags,
+    required String authority,
+    ComponentInfoFlags? flags,
   }) async {
     final providerData = await _channel.invokeMethod(
       "resolveContentProvider",
-      {"authority": authority, "flags": flags?.flags,},
+      {
+        "authority": authority,
+        "flags": flags?.flags,
+      },
     );
     if (providerData != null) {
       return ProviderInfoImpl(
-        Map<String, dynamic>.from(providerData,),
+        Map<String, dynamic>.from(
+          providerData,
+        ),
       );
     }
     return null;
@@ -519,7 +719,8 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
 
   @override
   Future<void> verifyPendingInstall({
-    required int id, required VerificationCode verificationCode,
+    required int id,
+    required VerificationCode verificationCode,
   }) async {
     await _channel.invokeMethod(
       "verifyPendingInstall",

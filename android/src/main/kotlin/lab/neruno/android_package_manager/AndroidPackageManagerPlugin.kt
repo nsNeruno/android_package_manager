@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.Checksum
 import android.content.pm.PackageManager
+import android.content.pm.PackageManager.ApplicationInfoFlags
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
@@ -79,10 +80,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             "getApplicationBanner" -> getApplicationBanner(call, result)
             "getApplicationEnabledSetting" -> getApplicationEnabledSetting(call, result)
             "getApplicationIcon" -> getApplicationIcon(call, result)
-            "getApplicationLabel" -> {
-                // TODO: Research for [ActivityInfo] required
-                result.success(null)
-            }
+            "getApplicationLabel" -> getApplicationLabel(call, result)
             "getBackgroundPermissionOptionLabel" -> getBackgroundPermissionOptionLabel(result)
             "getChangedPackages" -> getChangedPackages(call, result)
             "getComponentEnabledSetting" -> getComponentEnabledSetting(call, result)
@@ -248,7 +246,6 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
 
     private fun provideFlagsAsLong(call: MethodCall): Long = call.argument<Long>(flags) ?: 0
 
-    @Suppress("UNNECESSARY_SAFE_CALL")
     private fun <F, T> runWithFlags(
         call: MethodCall,
         result: Result? = null,
@@ -620,6 +617,32 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
             } catch (ex: PackageManager.NameNotFoundException) {
                 result.error(ex.javaClass.name, ex.message, null)
             }
+        }
+    }
+
+    private fun getApplicationLabel(call: MethodCall, result: Result) {
+        try {
+            runWithPackageNameAndFlags(
+                call,
+                result,
+                flagFactory = { flags -> ApplicationInfoFlags.of(flags) },
+                resultBuilder = { packageName, flags ->
+                    result.success(
+                        packageManager.getApplicationLabel(
+                            packageManager.getApplicationInfo(packageName, flags)
+                        )
+                    )
+                },
+                api33ResultBuilder = { packageName, flags ->
+                    result.success(
+                        packageManager.getApplicationLabel(
+                            packageManager.getApplicationInfo(packageName, flags)
+                        )
+                    )
+                },
+            )
+        } catch (ex: PackageManager.NameNotFoundException) {
+            result.error(ex.javaClass.name, ex.message, null)
         }
     }
 
