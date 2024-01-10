@@ -244,7 +244,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
 
     private fun provideFlags(call: MethodCall): Int = call.argument<Int>(flags) ?: 0
 
-    private fun provideFlagsAsLong(call: MethodCall): Long = call.argument<Long>(flags) ?: 0
+    private fun provideFlagsAsLong(call: MethodCall): Long = (call.argument<Int>(flags) ?: 0).toLong()
 
     private fun <F, T> runWithFlags(
         call: MethodCall,
