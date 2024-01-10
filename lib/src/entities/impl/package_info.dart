@@ -1,3 +1,4 @@
+import 'package:android_package_manager/src/entities/impl/signing_info_impl.dart';
 import 'package:android_package_manager/src/utils/parser_utils.dart';
 
 import '../base/activity_info.dart';
@@ -101,6 +102,18 @@ class PackageInfoImpl extends PackageInfo {
     ),
     versionName: data['versionName'],
     versionCode: data['versionCode'],
+    // Since Android 22
+    baseRevisionCode: data['baseRevisionCode'],
+    splitRevisionCodes: data['splitRevisionCodes'],
+    // Since Android 28
+    longVersionCode: data['longRevisionCode'],
+    signingInfo: safeMapParse(
+      data['signingInfo'], (data) => SigningInfoImpl(data,),
+    ),
+    // Since Android 29
+    isApex: data['isApex'],
+    // Since Android 31
+    attributions: safeMapParse(data['attributions'], (data) => data,),
   );
 
   static AndroidInstallLocation _parseInstallLocation(

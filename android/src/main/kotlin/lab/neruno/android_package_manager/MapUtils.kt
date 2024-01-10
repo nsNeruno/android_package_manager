@@ -138,7 +138,14 @@ fun Attribution.toMap(): Map<String, Any?> = mapOf(
 )
 
 fun Bundle.toMap(): Map<String, Any?> = this.keySet().map {
-    Pair<String, Any?>(it, this.get(it))
+    val value = get(it).run {
+        if (this is Array<*>) {
+            this.toList()
+        } else {
+            this
+        }
+    }
+    Pair<String, Any?>(it, value)
 }.run {
     mapOf(*this.toTypedArray())
 }
@@ -175,11 +182,11 @@ fun ComponentInfo.toMap(): Map<String, Any?> {
             if (isAtLeastAndroid26()) {
                 baseMap["splitName"] = splitName
                 if (isAtLeastAndroid31()) {
-                    baseMap["attributionTags"] = attributionTags
+                    baseMap["attributionTags"] = attributionTags.toList()
                 }
             }
         }
-        baseMap
+        baseMap.toMap()
     }
 }
 
@@ -308,7 +315,9 @@ fun PackageInfo.toMap(): Map<String, Any?> {
 
                 if (isAtLeastAndroid31()) {
                     baseMap["attributions"] = attributions?.map {
-                        it.toMap()
+                        Pair(it.label, it.tag)
+                    }?.let {
+                        mapOf(*it.toTypedArray())
                     }
                 }
             }
@@ -336,7 +345,7 @@ fun PermissionGroupInfo.toMap(): Map<String, Any?> {
             "descriptionRes" to descriptionRes,
             "flags" to flags,
             "priority" to priority,
-            "packageItemInfo" to toBaseMap(),
+            "packageItemInfo" to toBaseMap().toMap(),
         ).apply {
             putAll(it)
         }.toMap()

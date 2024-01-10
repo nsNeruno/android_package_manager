@@ -1,3 +1,14 @@
+## 0.7.0
+
+* Raised Target SDK to 34
+* Fixed casting error when running using flags on SDK INT >= 33
+* Fixed parsing of `PackageInfo` and reading of permissions. Please see note under example or see [#12](https://github.com/nsNeruno/android_package_manager/issues/12)
+* Fixed native parsing of various related Info entities
+* Exposed more fields under `PackageInfo`, including `longVersionCode` (Issue [#10](https://github.com/nsNeruno/android_package_manager/issues/10))
+* Updated example
+* Updated instrumentation test for Installed Package listing
+* Updated `README.md`
+
 ## 0.6.0
 
 * Enabled support for latest stable Flutter versions (raised max SDK constraints to 4.0.0)

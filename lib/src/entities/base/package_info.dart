@@ -8,6 +8,7 @@ import 'instrumentation_info.dart';
 import 'permission_info.dart';
 import 'provider_info.dart';
 import 'service_info.dart';
+import 'signing_info.dart';
 
 abstract class PackageInfo {
   const PackageInfo({
@@ -33,6 +34,16 @@ abstract class PackageInfo {
     this.splitNames,
     this.versionName,
     this.versionCode,
+    // Since Android 22
+    this.baseRevisionCode,
+    this.splitRevisionCodes,
+    // Since Android 28
+    this.longVersionCode,
+    this.signingInfo,
+    // Since Android 29
+    this.isApex,
+    // Since Android 31
+    this.attributions,
   });
 
   final List<ActivityInfo>? activities;
@@ -57,4 +68,18 @@ abstract class PackageInfo {
   final List<String>? splitNames;
   final String? versionName;
   final int? versionCode;
+
+  // Since Android 22
+  final int? baseRevisionCode;
+  final List<int>? splitRevisionCodes;
+
+  // Since Android 28
+  final int? longVersionCode;
+  final SigningInfo? signingInfo;
+
+  // Since Android 29
+  final bool? isApex;
+
+  // Since Android 31
+  final Map<String, dynamic>? attributions;
 }

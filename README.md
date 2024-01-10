@@ -19,11 +19,14 @@ final pm = AndroidPackageManager();
 ## Available Methods
 Please see official documentation of [PackageManager](https://developer.android.com/reference/android/content/pm/PackageManager) API.  
 **Disclaimer**: I have been trying to adapt most of the available methods. Done with some simple instrumentation tests.  
-Tested methods can be found at
-```dart
-'example/integration_test/android_package_manager_test.dart'
-```
-Example Flutter app demonstrates the [getInstalledApplications](https://developer.android.com/reference/android/content/pm/PackageManager#getInstalledApplications(int)) method.
+Tested methods can be found under `example/integration_test` directory.
+
+Example Flutter app demonstrates the [getInstalledPackages](https://developer.android.com/reference/android/content/pm/PackageManager#getInstalledPackages(int)) method.
+
+## Side Notes
+Please take note of the `flags` optional argument on some of the methods. These will affect the 
+output of the request to the APIs. For example, `PackageInfo` won't show any permissions info if 
+the flag for `GET_PERMISSIONS` is not specified.
 
 ## Optional permissions
 By default, the list of installed apps is limited on Android 11 (API level 30) and higher. Read more about it [here](https://developer.android.com/training/package-visibility). To access the full list of apps installed on a device, add the following permission to your `AndroidManifest.xml` file:

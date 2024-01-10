@@ -1,4 +1,5 @@
 import 'package:android_package_manager/android_package_manager.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -14,31 +15,31 @@ void main() {
           {
             PMFlag.getMetaData,
             PMFlag.getPermissions,
-            PMFlag.getReceivers,
-            PMFlag.getServices,
-            PMFlag.getProviders,
+            // PMFlag.getReceivers,
+            // PMFlag.getServices,
+            // PMFlag.getProviders,
           },
         ),
       );
-      print("BEGIN: getInstalledPackages",);
-      print(
+      debugPrint("BEGIN: getInstalledPackages",);
+      debugPrint(
         packages?.map(
           (e) {
             e.activities?.forEach(
-                  (activity) {
+              (activity) {
                 activity.getIcon().then(
-                      (aIcon) {
-                    print(
+                  (aIcon) {
+                    debugPrint(
                       'Package ${e.packageName} Icon: ${aIcon?.length} bytes',
                     );
                   },
                 );
                 activity.getLogo().then(
-                        (aLogo) {
-                      print(
-                        'Package ${e.packageName} Logo: ${aLogo?.length} bytes',
-                      );
-                    }
+                  (aLogo) {
+                    debugPrint(
+                      'Package ${e.packageName} Logo: ${aLogo?.length} bytes',
+                    );
+                  },
                 );
               },
             );
@@ -46,8 +47,33 @@ void main() {
           },
         ).join("\n",),
       );
-      print("END: getInstalledPackages",);
+      debugPrint("END: getInstalledPackages",);
       expect(packages != null, true,);
+
+      // Uncomment this to test individual Package (also import dart:math)
+      // final rnd = Random();
+      // final randomPackage = packages![rnd.nextInt(packages.length,)];
+      // final packageName = randomPackage.packageName!;
+      // debugPrint('Testing random package with name: $packageName',);
+      // final inquiries = await Future.wait(
+      //   [
+      //     pm.getPackageInfo(
+      //       packageName: packageName,
+      //     ),
+      //     pm.getPackageInfo(
+      //       packageName: packageName,
+      //       flags: PackageInfoFlags(
+      //         {
+      //           PMFlag.getPermissions,
+      //         },
+      //       ),
+      //     ),
+      //   ],
+      // );
+      // final piWithoutFlag = inquiries[0];
+      // final piWithFlag = inquiries[1];
+      // debugPrint('Without Flag: ${piWithoutFlag?.requestedPermissions}',);
+      // debugPrint('With Flag: ${piWithFlag?.requestedPermissions}',);
     },
   );
 }

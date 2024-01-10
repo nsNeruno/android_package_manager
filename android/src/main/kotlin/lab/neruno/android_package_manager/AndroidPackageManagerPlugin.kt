@@ -630,14 +630,14 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
                     result.success(
                         packageManager.getApplicationLabel(
                             packageManager.getApplicationInfo(packageName, flags)
-                        )
+                        ).toString()
                     )
                 },
                 api33ResultBuilder = { packageName, flags ->
                     result.success(
                         packageManager.getApplicationLabel(
                             packageManager.getApplicationInfo(packageName, flags)
-                        )
+                        ).toString()
                     )
                 },
             )
