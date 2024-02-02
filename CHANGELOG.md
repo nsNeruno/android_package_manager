@@ -1,3 +1,9 @@
+## 0.7.1
+
+* Added `hasSigningCertificate` method (including the option to use UID)
+* Added enum `CertificateType` in conjunction with the support for `hasSigningCertificate`
+* Instance of `AndroidPackageManager` is now a `const`
+
 ## 0.7.0
 
 * Raised Target SDK to 34

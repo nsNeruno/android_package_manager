@@ -154,3 +154,8 @@ enum BitmapCompressFormat {
   webpLossy,
   webpLossless,
 }
+
+enum CertificateType {
+  rawX509,
+  sha256,
+}

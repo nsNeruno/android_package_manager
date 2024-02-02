@@ -15,9 +15,9 @@ export 'src/entities/enums.dart';
 part 'src/android_package_manager_impl.dart';
 
 abstract class AndroidPackageManager {
-  AndroidPackageManager._();
+  const AndroidPackageManager._();
 
-  static final AndroidPackageManager _pm = AndroidPackageManagerImpl();
+  static const AndroidPackageManager _pm = AndroidPackageManagerImpl();
 
   factory AndroidPackageManager() {
     if (!Platform.isAndroid) {
@@ -170,6 +170,18 @@ abstract class AndroidPackageManager {
 
   Future<List<String>?> getSystemSharedLibraryNames() =>
       throw UnimplementedError();
+
+  Future<bool> hasSigningCertificateByUid({
+    required int uid,
+    required Uint8List certificateBytes,
+    CertificateType type = CertificateType.rawX509,
+  }) => throw UnimplementedError();
+
+  Future<bool> hasSigningCertificate({
+    required String packageName,
+    required Uint8List certificateBytes,
+    CertificateType type = CertificateType.rawX509,
+  }) => throw UnimplementedError();
 
   Future<bool> hasSystemFeature({
     required String featureName,

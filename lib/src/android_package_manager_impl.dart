@@ -1,7 +1,7 @@
 part of '../android_package_manager.dart';
 
 class AndroidPackageManagerImpl extends AndroidPackageManager {
-  AndroidPackageManagerImpl() : super._();
+  const AndroidPackageManagerImpl() : super._();
 
   static const MethodChannel _channel = MethodChannel(
     'android_package_manager',
@@ -533,6 +533,40 @@ class AndroidPackageManagerImpl extends AndroidPackageManager {
     return nameData?.whereType<String>().toList(
           growable: false,
         );
+  }
+
+  @override
+  Future<bool> hasSigningCertificateByUid({
+    required int uid,
+    required Uint8List certificateBytes,
+    CertificateType type = CertificateType.rawX509,
+  }) async {
+    final result = await _channel.invokeMethod(
+      'hasSigningCertificateWithUid',
+      {
+        'uid': uid,
+        'bytes': certificateBytes,
+        'type': type.index,
+      },
+    );
+    return result == true;
+  }
+
+  @override
+  Future<bool> hasSigningCertificate({
+    required String packageName,
+    required Uint8List certificateBytes,
+    CertificateType type = CertificateType.rawX509,
+  }) async {
+    final result = await _channel.invokeMethod(
+      'hasSigningCertificate',
+      {
+        'packageName': packageName,
+        'bytes': certificateBytes,
+        'type': type.index,
+      },
+    );
+    return result == true;
   }
 
   @override

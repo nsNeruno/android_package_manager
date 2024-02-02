@@ -155,6 +155,7 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
                 result.success(null)
             }
             "hasSigningCertificate" -> hasSigningCertificate(call, result)
+            "hasSigningCertificateWithUid" -> hasSigningCertificateWithUid(call, result)
             "hasSystemFeature" -> hasSystemFeature(call, result)
             "isAutoRevokeWhitelisted" -> isAutoRevokeWhitelisted(call, result)
             "isDefaultApplicationIcon" -> isDefaultApplicationIcon(call, result)
@@ -1092,13 +1093,34 @@ class AndroidPackageManagerPlugin: FlutterPlugin, MethodCallHandler, ActivityAwa
                 PackageManager.CERT_INPUT_SHA256
             )
             if (certificate == null || type == null || !validTypes.contains(type)) {
-                result.success(null)
+                result.success(false)
                 return
             }
             result.success(
                 packageManager.hasSigningCertificate(it, certificate, type)
             )
         }
+    }
+
+    private fun hasSigningCertificateWithUid(call: MethodCall, result: Result) {
+        if (!isAtLeastAndroid28()) {
+            result.success(null)
+            return
+        }
+        val uid = call.argument<Int>("uid")
+        val certificate = call.argument<ByteArray>("certificate")
+        val type = call.argument<Int>("type")
+        val validTypes = listOf(
+                PackageManager.CERT_INPUT_RAW_X509,
+                PackageManager.CERT_INPUT_SHA256
+        )
+        if (uid == null || certificate == null || type == null || !validTypes.contains(type)) {
+            result.success(null)
+            return
+        }
+        result.success(
+                packageManager.hasSigningCertificate(uid, certificate, type)
+        )
     }
 
     private fun hasSystemFeature(call: MethodCall, result: Result) {
